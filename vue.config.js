@@ -1,9 +1,9 @@
 const path = require("path");
+const resolve = dir => path.join(__dirname, dir);
 module.exports = {
-  lintOnSave: false,
-  resolve: {
-    alias: {
-      "~": path.resolve(__dirname, "src")
-    }
+  chainWebpack: config => {
+    // 添加别名
+    config.resolve.alias
+      .set("@", resolve("src"));
   }
 };
