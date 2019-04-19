@@ -1,3 +1,9 @@
+const path = require("path");
 module.exports = {
-  lintOnSave: false
+  lintOnSave: false,
+  resolve: {
+    alias: {
+      "~": path.resolve(__dirname, "src")
+    }
+  }
 };
