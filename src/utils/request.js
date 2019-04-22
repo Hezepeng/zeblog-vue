@@ -1,11 +1,11 @@
 import axios from "axios";
 import { Message, MessageBox } from "element-ui";
-import store from "../store";
+import store from "../store/store";
 import { getToken } from "@/utils/authorize.js";
 
 // 创建axios实例
 const service = axios.create({
-  baseURL: process.env.BASE_API, // api 的 base_url
+  baseURL: process.env.VUE_APP_BASE_API,
   timeout: 5000 // 请求超时时间
 });
 
