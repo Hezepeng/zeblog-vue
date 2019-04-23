@@ -56,77 +56,48 @@
 
 <script>
 export default {
-  name: "Login",
-
-  props: {
-    status: {
-      type: String,
-      default: ""
-    }
-  },
+  name: 'Login',
 
   data() {
     return {
-      message: "",
+      message: '',
       loginForm: {
-        username: "",
-        password: ""
+        username: '',
+        password: ''
       },
       loading: false,
-      pwdType: "password",
+      pwdType: 'password',
       redirect: undefined
-    };
-  },
-
-  computed: {
-    reversedMessage: function() {
-      return this.message + this.message;
     }
-  },
-
-  watch: {
-    oldMessage: function(val) {
-      this.message = val + " ";
-    }
-  },
-
-  created: function() {
-    // `this` 指向 vm 实例
-    console.log("message is: " + this.message);
-  },
-
-  mounted: function() {
-    // `this` 指向 vm 实例
-    console.log("message is: " + this.message);
   },
 
   methods: {
     showPwd() {
-      if (this.pwdType === "password") {
-        this.pwdType = "";
+      if (this.pwdType === 'password') {
+        this.pwdType = ''
       } else {
-        this.pwdType = "password";
+        this.pwdType = 'password'
       }
     },
     handleLogin() {
-      if (this.loginForm.username !== "" && this.loginForm.password !== "") {
-        this.loading = true;
+      if (this.loginForm.username !== '' && this.loginForm.password !== '') {
+        this.loading = true
         this.$store
-          .dispatch("Login", this.loginForm)
+          .dispatch('login', this.loginForm)
           .then(() => {
-            this.loading = false;
-            this.$router.push({ path: this.redirect || "/" });
+            this.loading = false
+            this.$router.push({ path: this.redirect || '/' })
           })
           .catch(() => {
-            this.loading = false;
-          });
+            this.loading = false
+          })
       } else {
-        console.log("输入数据不合法！");
-        return false;
+        console.log('输入数据不合法！')
+        return false
       }
     }
   }
-};
+}
 </script>
 
 <style rel="stylesheet/scss" lang="scss">
