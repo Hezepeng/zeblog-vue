@@ -81,6 +81,7 @@ export const asyncRouterMap = [
     component: Layout,
     name: 'Permission',
     redirect: '/permission/admin',
+    alwaysShow: true,
     meta: {
       title: '权限测试页面',
       icon: 'nested',
