@@ -84,7 +84,7 @@ export const asyncRouterMap = [
     meta: {
       title: '权限测试页面',
       icon: 'nested',
-      roles: ['admin']
+      role: ['admin']
     },
     children: [
       {
@@ -94,6 +94,7 @@ export const asyncRouterMap = [
         meta: {
           role: ['admin', 'super_editor'],
           title: '权限测试',
+          icon: 'checklist',
           noCache: true
           // 页面需要的权限
         }
@@ -105,11 +106,15 @@ export const asyncRouterMap = [
         meta: {
           role: ['admin', 'super_editor'],
           title: '子权限测试页',
+          icon: 'addteam',
           noCache: true
         } // 页面需要的权限
       }
     ]
-  }
+  },
+
+  // 404 page must be placed at the end !!!
+  { path: '*', redirect: '/404', hidden: true }
 ]
 
 const createRouter = () => new Router({
