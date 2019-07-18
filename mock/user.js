@@ -1,4 +1,3 @@
-
 const tokens = {
   admin: {
     token: 'admin'
@@ -29,14 +28,14 @@ export default [
     url: '/login',
     type: 'post',
     response: config => {
+      console.log('xxx')
       const { username } = config.body
       const token = tokens[username]
-
       // mock error
       if (!token) {
         return {
           code: 60204,
-          message: 'Account and password are incorrect.'
+          message: '用户名密码错误'
         }
       }
 

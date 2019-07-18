@@ -114,6 +114,45 @@ export const asyncRouterMap = [
     ]
   },
 
+  // 文章模块
+  {
+    path: '/article',
+    component: Layout,
+    name: 'Article',
+    redirect: '/article/list',
+    alwaysShow: true,
+    meta: {
+      title: '文章管理',
+      icon: 'nested',
+      role: ['admin']
+    },
+    children: [
+      {
+        path: 'new',
+        component: () => import('@/views/article/NewArticle'),
+        name: 'NewArticle',
+        meta: {
+          role: ['admin'],
+          title: '新建博文',
+          icon: 'checklist',
+          noCache: true
+          // 页面需要的权限
+        }
+      },
+      {
+        path: 'list',
+        component: () => import('@/views/article/ArticleList'),
+        name: 'ArticleList',
+        meta: {
+          role: ['admin'],
+          title: '博文列表',
+          icon: 'addteam',
+          noCache: true
+        } // 页面需要的权限
+      }
+    ]
+  },
+
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
