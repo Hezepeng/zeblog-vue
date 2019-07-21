@@ -106,7 +106,7 @@ export function param2Obj(url) {
 }
 
 export function deepCopy(obj) {
-  const result = Array.isArray(obj) ? [] : {};
+  const result = Array.isArray(obj) ? [] : {}
   for (const key in obj) {
     if (obj.hasOwnProperty(key)) {
       if (typeof obj[key] === 'object') {
