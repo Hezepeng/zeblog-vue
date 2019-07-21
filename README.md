@@ -1,4 +1,4 @@
-# vue-admin
+# zeblog-vue
 
 ## Project setup
 ```
