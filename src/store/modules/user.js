@@ -34,10 +34,11 @@ const user = {
           .then(response => {
             const data = response.data
             Message({
-              message: response.message,
+              message: response.msg,
               type: 'success',
               duration: 3 * 1000
             })
+            console.log(data.token)
             setToken(data.token)
             commit('SET_TOKEN', data.token)
             resolve()
@@ -54,9 +55,10 @@ const user = {
         getUserInfo(state.token)
           .then(response => {
             const data = response.data
-            if (data.roles && data.roles.length > 0) {
+            if (data.role && data.role.length > 0) {
               // 验证返回的roles是否是一个非空数组
-              commit('SET_ROLES', data.roles)
+              const roles = new Array(data.role)
+              commit('SET_ROLES', roles)
             } else {
               reject('getInfo: roles must be a non-null array !')
             }

@@ -28,7 +28,7 @@ router.beforeEach((to, from, next) => {
           .dispatch('getUserInfo')
           .then(res => {
             // 拉取info
-            const roles = res.data.roles
+            const roles = new Array(res.data.role)
             store.dispatch('generateRoutes', roles).then(accessRoutes => {
               // 生成可访问的路由表
               console.log(accessRoutes)
