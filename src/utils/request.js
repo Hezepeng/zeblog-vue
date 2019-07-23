@@ -12,13 +12,15 @@ const service = axios.create({
 // request拦截器
 service.interceptors.request.use(
   config => {
-    if (store.getters.token) {
-      config.headers['X-Token'] = getToken() // 让每个请求携带自定义token 请根据实际情况自行修改
+    const token = getToken()
+    if (token !== null) {
+      config.headers['X-Token'] = token // 让每个请求携带自定义token 请根据实际情况自行修改
     }
     return config
   },
   error => {
     // Do something with request error
+    console.log('发生错误')
     console.log(error) // for debug
     Promise.reject(error)
   }
@@ -40,11 +42,15 @@ service.interceptors.response.use(
 
       // 50008:非法的token; 50012:其他客户端登录了;  50014:Token 过期了;
       if (res.status === 10) {
+        // store.dispatch('fedLogOut').then(() => {
+        //   location.reload() // 为了重新实例化vue-router对象 避免bug
+        // })
         MessageBox.confirm('请登录后访问', '登录信息', {
           confirmButtonText: '立即登录',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
+          console.log('开始reload')
           store.dispatch('fedLogOut').then(() => {
             location.reload() // 为了重新实例化vue-router对象 避免bug
           })

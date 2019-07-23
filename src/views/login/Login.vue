@@ -55,6 +55,8 @@
 </template>
 
 <script>
+import { Message } from 'element-ui'
+
 export default {
   name: 'Login',
 
@@ -62,8 +64,8 @@ export default {
     return {
       message: '',
       loginForm: {
-        username: '',
-        password: ''
+        username: 'admin',
+        password: 'admin'
       },
       loading: false,
       pwdType: 'password',
@@ -92,7 +94,11 @@ export default {
             this.loading = false
           })
       } else {
-        console.log('输入数据不合法！')
+        Message({
+          message: '用户名密码不能为空',
+          type: 'error',
+          duration: 3 * 1000
+        })
         return false
       }
     }

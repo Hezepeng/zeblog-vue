@@ -38,7 +38,6 @@ const user = {
               type: 'success',
               duration: 3 * 1000
             })
-            console.log(data.token)
             setToken(data.token)
             commit('SET_TOKEN', data.token)
             resolve()
@@ -52,7 +51,7 @@ const user = {
     // 获取用户信息
     getUserInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
-        getUserInfo(state.token)
+        getUserInfo()
           .then(response => {
             const data = response.data
             if (data.role && data.role.length > 0) {
@@ -91,7 +90,9 @@ const user = {
     // 前端 登出
     fedLogOut({ commit }) {
       return new Promise(resolve => {
+        console.log('开始fedLogOut')
         commit('SET_TOKEN', '')
+        commit('SET_ROLES', [])
         removeToken()
         resolve()
       })
