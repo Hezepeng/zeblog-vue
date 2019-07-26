@@ -91,7 +91,7 @@ export const asyncRouterMap = [
       {
         path: 'admin',
         component: () => import('@/views/permission/RootPermission'),
-        name: 'AdminPage',
+        name: 'RootPermission',
         meta: {
           role: ['admin', 'super_editor'],
           title: '权限测试',
@@ -114,6 +114,59 @@ export const asyncRouterMap = [
     ]
   },
 
+  // 个人模块
+  {
+    path: '/my',
+    component: Layout,
+    children: [
+      {
+        path: 'edit',
+        name: 'UserEdit',
+        component: () => import('@/views/user/UserEdit'),
+        meta: { title: '个人信息', icon: 'nested' }
+      }
+    ]
+  },
+
+  // 用户模块
+  {
+    path: '/user',
+    component: Layout,
+    name: 'User',
+    redirect: '/user/list',
+    alwaysShow: true,
+    meta: {
+      title: '用户管理',
+      icon: 'nested',
+      role: ['admin', 'editor']
+    },
+    children: [
+      {
+        path: 'new',
+        component: () => import('@/views/user/NewUser'),
+        name: 'NewUser',
+        meta: {
+          role: ['admin'],
+          title: '添加用户',
+          icon: 'checklist',
+          noCache: true
+          // 页面需要的权限
+        }
+      },
+      {
+        path: 'list',
+        component: () => import('@/views/user/UserList'),
+        name: 'UserList',
+        meta: {
+          role: ['admin', 'editor'],
+          title: '用户列表',
+          icon: 'addteam',
+          noCache: true
+        } // 页面需要的权限
+      }
+    ]
+  },
+
   // 文章模块
   {
     path: '/article',
@@ -124,7 +177,7 @@ export const asyncRouterMap = [
     meta: {
       title: '文章管理',
       icon: 'nested',
-      role: ['admin']
+      role: ['admin', 'editor']
     },
     children: [
       {
@@ -132,7 +185,7 @@ export const asyncRouterMap = [
         component: () => import('@/views/article/NewArticle'),
         name: 'NewArticle',
         meta: {
-          role: ['admin'],
+          role: ['admin', 'editor'],
           title: '新建博文',
           icon: 'checklist',
           noCache: true
@@ -144,7 +197,7 @@ export const asyncRouterMap = [
         component: () => import('@/views/article/ArticleList'),
         name: 'ArticleList',
         meta: {
-          role: ['admin'],
+          role: ['admin', 'editor'],
           title: '博文列表',
           icon: 'addteam',
           noCache: true
