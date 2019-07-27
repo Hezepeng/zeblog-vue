@@ -110,6 +110,7 @@
 <script>
 import { deepCopy } from '@/utils'
 import { deleteUser, getUserList, updateUser } from '@/api/user'
+import { MessageBox } from 'element-ui'
 
 export default {
   name: 'UserList',
@@ -165,13 +166,37 @@ export default {
       })
     },
     onDeleteRow(index, row) {
-      deleteUser(row).then(response => {
-        this.tableData.splice(this.tableData.indexOf(row), 1)
+      const userinfo = []; const msg = []
+      userinfo.push('要删除的用户信息如下')
+      userinfo.push('用户ID ：' + row.userId)
+      userinfo.push('用户名 ：' + row.username)
+      userinfo.push('姓名 ：' + row.name)
+      userinfo.push('此操作将永久删除该用户信息, 是否继续?')
+      const h = this.$createElement
+      for (const i in userinfo) {
+        msg.push(h('p', null, userinfo[i]))
+      }
+      this.$confirm('警告提示', {
+        title: '警告提示',
+        message: h('div',null,msg),
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        center: true
+      }).then(() => {
+        deleteUser(row.username).then(response => {
+          this.tableData.splice(this.tableData.indexOf(row), 1)
+          this.$message({
+            message: response.msg,
+            type: 'success',
+            center: true,
+            duration: 2000
+          })
+        })
+      }).catch(() => {
         this.$message({
-          message: '删除成功！',
-          type: 'success',
-          center: true,
-          duration: 2000
+          type: 'info',
+          message: '已取消删除'
         })
       })
     }

@@ -182,11 +182,23 @@ export const asyncRouterMap = [
     children: [
       {
         path: 'new',
-        component: () => import('@/views/article/NewArticle'),
-        name: 'NewArticle',
+        component: () => import('@/views/article/NewMavonEditor'),
+        name: 'NewMavonEditor',
         meta: {
           role: ['admin', 'editor'],
-          title: '新建博文',
+          title: '新建博文-MavonEditor',
+          icon: 'checklist',
+          noCache: true
+          // 页面需要的权限
+        }
+      },
+      {
+        path: 'new2',
+        component: () => import('@/views/article/NewVditor'),
+        name: 'NewVditor',
+        meta: {
+          role: ['admin', 'editor'],
+          title: '新建博文-Vditor',
           icon: 'checklist',
           noCache: true
           // 页面需要的权限

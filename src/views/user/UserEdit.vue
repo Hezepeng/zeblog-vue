@@ -228,7 +228,7 @@ export default {
         if (valid) {
           updateUser(this.form).then(response => {
             this.$message({
-              message: '打卡成功！',
+              message: response.msg,
               type: 'success',
               center: true,
               duration: 3000
