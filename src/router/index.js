@@ -186,21 +186,9 @@ export const asyncRouterMap = [
         name: 'NewMavonEditor',
         meta: {
           role: ['admin', 'editor'],
-          title: '新建博文-MavonEditor',
+          title: '新建博文',
           icon: 'checklist',
-          noCache: true
-          // 页面需要的权限
-        }
-      },
-      {
-        path: 'new2',
-        component: () => import('@/views/article/NewVditor'),
-        name: 'NewVditor',
-        meta: {
-          role: ['admin', 'editor'],
-          title: '新建博文-Vditor',
-          icon: 'checklist',
-          noCache: true
+          noCache: false
           // 页面需要的权限
         }
       },
@@ -211,6 +199,18 @@ export const asyncRouterMap = [
         meta: {
           role: ['admin', 'editor'],
           title: '博文列表',
+          icon: 'addteam',
+          noCache: true
+        } // 页面需要的权限
+      },
+      {
+        path: 'detail/:articleId',
+        component: () => import('@/views/article/ArticleDetail'),
+        name: 'ArticleDetail',
+        alwaysShow: false,
+        meta: {
+          role: ['admin', 'editor'],
+          title: '文章详情',
           icon: 'addteam',
           noCache: true
         } // 页面需要的权限

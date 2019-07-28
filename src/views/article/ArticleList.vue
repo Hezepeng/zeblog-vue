@@ -19,18 +19,24 @@
             label="文章标题"
             width="180"
           />
+          <!--          <el-table-column-->
+          <!--            prop="category"-->
+          <!--            label="文章分类"-->
+          <!--            width="180"-->
+          <!--            sortable-->
+          <!--            :filters="[{ text: '前端', value: '前端' }, { text: 'Java', value: 'Java' }, { text: '.NET', value: '.NET' }, { text: 'NLP', value: 'NLP' }]"-->
+          <!--            :filter-method="filterCategory"-->
+          <!--            filter-placement="bottom-end"-->
+          <!--          />-->
           <el-table-column
-            prop="category"
-            label="文章分类"
-            width="180"
+            prop="codeStyle"
+            label="代码风格"
             sortable
-            :filters="[{ text: '前端', value: '前端' }, { text: 'Java', value: 'Java' }, { text: '.NET', value: '.NET' }, { text: 'NLP', value: 'NLP' }]"
-            :filter-method="filterCategory"
-            filter-placement="bottom-end"
+            width="120"
           />
           <el-table-column
-            prop="label"
-            label="标签"
+            prop="originalType"
+            label="类型"
             width="120"
             sortable
             :filters="[{ text: '原创', value: '原创' }, { text: '转载', value: '转载' }]"
@@ -39,21 +45,29 @@
           >
             <template slot-scope="scope">
               <el-tag
-                :type="scope.row.label === '转载' ? 'primary' : 'success'"
+                :type="scope.row.originalType === '转载' ? 'primary' : 'success'"
                 disable-transitions
-              >{{ scope.row.label }}
+              >{{ scope.row.originalType }}
               </el-tag>
             </template>
           </el-table-column>
           <el-table-column
-            prop="time"
+            prop="createTime"
             label="创建时间"
             sortable
             width="180"
           />
           <el-table-column
-            prop="remark"
-            label="备注"
+            prop="readTimes"
+            label="浏览量"
+            sortable
+            width="120"
+          />
+          <el-table-column
+            prop="readTimes"
+            label="点赞量"
+            sortable
+            width="120"
           />
           <el-table-column
             align="center"
@@ -68,7 +82,14 @@
             <template slot-scope="scope">
               <el-button
                 size="mini"
+                type="primary"
                 @click="onEditRow(scope.$index, scope.row)"
+              >查看
+              </el-button>
+              <el-button
+                size="mini"
+                type="success"
+                @click="onDeleteRow(scope.$index, scope.row)"
               >编辑
               </el-button>
               <el-button
@@ -76,8 +97,7 @@
                 type="danger"
                 @click="onDeleteRow(scope.$index, scope.row)"
               >删除
-              </el-button>
-            </template>
+              </el-button></template>
           </el-table-column>
         </el-table>
       </el-col>
@@ -120,22 +140,18 @@ export default {
     const _this = this
     getArticleList().then(response => {
       _this.tableData = response.data
-      for (const item of _this.tableData) {
-        item.time = item.time.replace('T', '')
-      }
     })
   },
 
   methods: {
     filterLabel(value, row) {
-      return row.label === value
+      return row.originalType === value
     },
     filterCategory(value, row) {
       return row.category === value
     },
     onEditRow(index, row) {
-      this.editRow = deepCopy(row)
-      this.showDialog = true
+      this.$router.push('/article/detail/' + row.id)
     },
     onSaveEditRow() {
       const _this = this

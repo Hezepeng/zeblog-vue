@@ -2,11 +2,9 @@ import request from '@/utils/request'
 
 export function addArticle(article) {
   return request({
-    url: '/article/addArticle',
+    url: '/article/add',
     method: 'post',
-    data: {
-      article
-    }
+    data: article
   })
 }
 
@@ -32,8 +30,16 @@ export function deleteArticle(article) {
 
 export function getArticleList() {
   return request({
-    url: '/article/getArticleList',
+    url: '/article/list',
     method: 'get'
+  })
+}
+
+export function getArticleById(articleId) {
+  return request({
+    url: '/article/getArticleById',
+    method: 'get',
+    params: { articleId }
   })
 }
 

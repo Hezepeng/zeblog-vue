@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
-    <el-form>
-      <el-form-item class="title-inline">
+    <el-form ref="article" :model="article" :rules="formRules" auto-complete="on">
+      <el-form-item class="title-inline" prop="title">
         <el-col :span="8">
           <el-input v-model="article.title" placeholder="输入文章标题..." />
         </el-col>
@@ -14,7 +14,7 @@
               :value="key"
             />
           </el-select>
-          <el-button size="medium" type="primary">发表文章</el-button>
+          <el-button size="medium" type="primary" @click="onSubmit">发表文章</el-button>
         </el-col>
       </el-form-item>
       <el-form-item prop="originalType">
@@ -34,7 +34,7 @@
 
 <script>
 import { Message } from 'element-ui'
-import { uploadImage } from '@/api/article'
+import { addArticle, uploadImage } from '@/api/article'
 const mavonEditor = require('mavon-editor')
 import 'mavon-editor/dist/css/index.css'
 export default {
@@ -50,6 +50,10 @@ export default {
         markdownCatalog: '',
         htmlCatalog: '',
         originalType: ''
+      },
+      formRules: {
+        title: [{ required: true, trigger: 'blur', message: '文章名不能为空' }],
+        originalType: [{ required: true, trigger: 'blur', message: '请选择文章是否原创' }]
       },
       codeStyleList: {
         'agate': 1,
@@ -181,12 +185,25 @@ export default {
     },
     onSave(markdown, html) {
       Message.success('已保存到本地草稿箱')
-      console.log(markdown)
-      console.log(html)
       this.article.markdownContent = markdown
       this.article.htmlContent = html
-      const o = this.$refs.md.markdownIt
-      console.log(o)
+      localStorage.setItem('editor', JSON.stringify(this.article));
+      // const o = this.$refs.md.markdownIt
+    },
+    onSubmit() {
+      this.$refs.article.validate(valid => {
+        if (valid) {
+          const editor = this.$refs.md
+          // 获取html格式内容
+          this.article.htmlContent = editor.d_render
+          // 获取markdown格式内容
+          this.article.markdownContent = editor.d_value
+          console.log(this.article)
+          addArticle(this.article).then(response => {
+            Message.success('文章发布成功')
+          }).catch(() => {})
+        }
+      })
     }
   }
 }
@@ -209,7 +226,17 @@ export default {
 .el-radio{
   margin-right: 1rem;
 }
+
+</style>
+
+<style>
 .v-note-op{
   background-color: #F6F8FA !important;
+}
+.v-note-wrapper{
+  z-index: 800;
+}
+[type="button"]{
+  -webkit-appearance: unset;
 }
 </style>

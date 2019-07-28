@@ -1,36 +1,38 @@
 <template>
   <div class="app-container">
-    <mavon-editor ref="md2" :subfield="false" :default-open="defaultData" :toolbars-flag="false" :box-shadow="false" :navigation="true" v-html="html" />
+    <mavon-editor ref="md2" :hljs="true" :codeStyle="codeStyle" :subfield="false" :default-open="defaultData" :toolbars-flag="false" :box-shadow="false" :navigation="true" v-html="html" />
   </div>
 </template>
 
 <script>
 import { Message } from 'element-ui'
+import { getArticleById } from '@/api/article'
+const mavonEditor = require('mavon-editor')
+import 'mavon-editor/dist/css/index.css'
 
 export default {
   name: 'NewMavonEditor',
+  components: { 'mavonEditor': mavonEditor.mavonEditor },
+
   data() {
     return {
+      articleId: '',
+      codeStyle: '',
       title: '',
       html: '',
-      defaultData: 'preview',
-      markdownContent: '',
+      defaultData: 'preview'
     }
   },
 
   mounted: function() {
-
+    this.articleId = this.$route.params.articleId
+    getArticleById(this.articleId).then(response => {
+      this.html = response.data.htmlContent
+      this.codeStyle = response.data.codeStyle === null ? 'xcode' : response.data.codeStyle
+    })
   },
 
   methods: {
-    onSave(markdown, html) {
-      Message.success('已保存到本地草稿箱')
-      console.log(markdown)
-      console.log(html)
-      const o = this.$refs.md.markdownIt
-      console.log(o)
-      this.html = html
-    }
   }
 }
 </script>
