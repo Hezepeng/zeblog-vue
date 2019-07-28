@@ -36,3 +36,12 @@ export function getArticleList() {
     method: 'get'
   })
 }
+
+export function uploadImage(image) {
+  return request({
+    url: '/article/uploadImage',
+    method: 'post',
+    headers: { 'Content-Type': 'multipart/form-data' },
+    data: image
+  })
+}
