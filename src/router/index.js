@@ -167,6 +167,34 @@ export const asyncRouterMap = [
     ]
   },
 
+  // 分类模块
+  {
+    path: '/category',
+    component: Layout,
+    name: 'Category',
+    redirect: '/category/list',
+    alwaysShow: true,
+    meta: {
+      title: '分类管理',
+      icon: 'nested',
+      role: ['admin', 'editor']
+    },
+    children: [
+      {
+        path: 'list',
+        component: () => import('@/views/category/CategoryList'),
+        name: 'CategoryList',
+        meta: {
+          role: ['admin','editor'],
+          title: '分类列表',
+          icon: 'checklist',
+          noCache: true
+          // 页面需要的权限
+        }
+      }
+    ]
+  },
+
   // 文章模块
   {
     path: '/article',
@@ -208,6 +236,7 @@ export const asyncRouterMap = [
         component: () => import('@/views/article/ArticleDetail'),
         name: 'ArticleDetail',
         alwaysShow: false,
+        hidden: true,
         meta: {
           role: ['admin', 'editor'],
           title: '文章详情',

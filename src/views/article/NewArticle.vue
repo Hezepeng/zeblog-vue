@@ -56,6 +56,7 @@ export default {
         category: '',
         label: '',
         time: parseTime(new Date(), ''),
+
         remark: ''
       },
       formRules: {

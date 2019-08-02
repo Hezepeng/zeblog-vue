@@ -17,17 +17,87 @@
           <el-button size="medium" type="primary" @click="onSubmit">发表文章</el-button>
         </el-col>
       </el-form-item>
-      <el-form-item prop="originalType">
-        <el-col :span="10">
-          <el-radio-group v-model="article.originalType">
-            <el-radio border size="medium" label="原创">原创</el-radio>
-            <el-radio border size="medium" label="转载">转载</el-radio>
-          </el-radio-group>
-        </el-col>
-      </el-form-item>
     </el-form>
     <div id="editor">
       <mavon-editor ref="md" v-model="article.markdownContent" :ishljs="true" :box-shadow="false" :code-style="article.codeStyle" @imgAdd="imgAdd" @save="onSave" />
+    </div>
+
+    <!-- TODO 尝试将dialog单独写成组件 -->
+    <div v-if="showDialog">
+      <el-dialog title="发布文章" top="8vh" width="50%" :visible.sync="showDialog" center>
+        <el-form ref="form" label-position="left" :model="article" label-width="80px" :rules="formRules" style="padding: 0 2rem">
+          <el-form-item label="文章标题" prop="title">
+            <el-col :span="18">
+              <el-input v-model="article.title" />
+            </el-col>
+          </el-form-item>
+          <el-form-item label="文章标签">
+            <el-tag
+              v-for="tag in article.tags"
+              :key="tag"
+              closable
+              :disable-transitions="false"
+              @close="handleCloseTag(tag)"
+            >
+              {{ tag }}
+            </el-tag>
+            <el-input
+              v-if="inputVisible"
+              ref="saveTagInput"
+              v-model="inputValue"
+              class="input-new-tag"
+              size="small"
+              @keyup.enter.native="handleInputConfirm"
+              @blur="handleInputConfirm"
+            />
+            <el-button v-else class="button-new-tag" size="mini" @click="showTagInput">+ New Tag</el-button>
+          </el-form-item>
+          <el-form-item label="文章分类">
+            <el-checkbox-group v-model="article.categories">
+              <el-checkbox label="Java技术"></el-checkbox>
+              <el-checkbox label="人工智能"></el-checkbox>
+              <el-checkbox label="前端开发"></el-checkbox>
+              <el-checkbox label="生活随笔"></el-checkbox>
+              <el-checkbox label="日记" disabled></el-checkbox>
+            </el-checkbox-group>
+          </el-form-item>
+          <el-form-item label="文章类型" prop="originalType">
+            <el-col :span="18">
+              <el-radio-group v-model="article.originalType">
+                <el-radio border size="medium" label="原创">原创</el-radio>
+                <el-radio border size="medium" label="转载">转载</el-radio>
+              </el-radio-group>
+            </el-col>
+          </el-form-item>
+          <el-form-item label="是否顶置" prop="isTop">
+            <el-col :span="12">
+              <el-checkbox v-model="article.isTop">顶置</el-checkbox>
+              <el-select v-model="article.topRank" style="margin-left: 10px;" placeholder="请选择顶置优先等级" :disabled="!article.isTop">
+                <el-option
+                  v-for="(item,key) in topRankList"
+                  :key="key"
+                  :label="key"
+                  :value="item"
+                />
+              </el-select>
+            </el-col>
+          </el-form-item>
+          <el-form-item label="设置可见" prop="state">
+            <el-col :span="12">
+              <el-radio-group v-model="article.state">
+                <el-radio :label="1">公开</el-radio>
+                <el-radio :label="2">仅自己可见</el-radio>
+              </el-radio-group>
+            </el-col>
+          </el-form-item>
+          <p class="footer-tip">温馨提示：请勿发布涉及政治、广告、营销、翻墙、违反国家法律法规等内容</p>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button type="danger" @click="onCancelDialog()">取 消</el-button>
+          <el-button @click="onSaveToDrafts()">保存为草稿</el-button>
+          <el-button type="primary" @click="onSubmit()">发布文章</el-button>
+        </div>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -49,11 +119,29 @@ export default {
         htmlContent: '',
         markdownCatalog: '',
         htmlCatalog: '',
-        originalType: ''
+        originalType: '',
+        isTop: '',
+        topRank: '',
+        tags: ['Java', 'SSM', 'Spring MVC', 'Vue.js'],
+        categories:[],
+        state: ''
       },
       formRules: {
-        title: [{ required: true, trigger: 'blur', message: '文章名不能为空' }],
-        originalType: [{ required: true, trigger: 'blur', message: '请选择文章是否原创' }]
+        title: [{ required: true, trigger: 'blur', message: '文章名不能为空' }]
+      },
+      inputVisible: false,
+      inputValue: '',
+      showDialog: false,
+      topRankList: {
+        '1 (优先度最低)': 1,
+        '2': 2,
+        '3': 3,
+        '4': 4,
+        '5': 5,
+        '6': 6,
+        '7': 7,
+        '8': 8,
+        '9 (优先度最高)': 9,
       },
       codeStyleList: {
         'agate': 1,
@@ -187,7 +275,7 @@ export default {
       Message.success('已保存到本地草稿箱')
       this.article.markdownContent = markdown
       this.article.htmlContent = html
-      localStorage.setItem('editor', JSON.stringify(this.article));
+      localStorage.setItem('editor', JSON.stringify(this.article))
       // const o = this.$refs.md.markdownIt
     },
     onSubmit() {
@@ -199,11 +287,39 @@ export default {
           // 获取markdown格式内容
           this.article.markdownContent = editor.d_value
           console.log(this.article)
-          addArticle(this.article).then(response => {
-            Message.success('文章发布成功')
-          }).catch(() => {})
+          this.showDialog = true
+          // addArticle(this.article).then(response => {
+          //   Message.success('文章发布成功')
+          // }).catch(() => {})
         }
       })
+    },
+    onCancelDialog() {
+      this.showDialog = false
+    },
+    onSaveToDrafts() {
+      // TODO 保存到草稿箱 为Article加一个字段 状态字段 0草稿 1公开 2私密
+      Message.success('已保存到草稿箱')
+      this.showDialog = false
+    },
+    handleCloseTag(tag) {
+      this.article.tags.splice(this.article.tags.indexOf(tag), 1)
+    },
+
+    showTagInput() {
+      this.inputVisible = true
+      this.$nextTick(_ => {
+        this.$refs.saveTagInput.$refs.input.focus()
+      })
+    },
+
+    handleInputConfirm() {
+      const inputValue = this.inputValue
+      if (inputValue) {
+        this.article.tags.push(inputValue)
+      }
+      this.inputVisible = false
+      this.inputValue = ''
     }
   }
 }
@@ -222,19 +338,41 @@ export default {
 #editor{
   margin: auto;
   height: 580px;
+  z-index: 800;
 }
 .el-radio{
   margin-right: 1rem;
 }
+.v-note-wrapper{
+  z-index: 800;
+}
 
+.el-tag + .el-tag {
+  margin-left: 10px;
+}
+.button-new-tag {
+  margin-left: 10px;
+  height: 32px;
+  line-height: 30px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.input-new-tag {
+  width: 90px;
+  margin-left: 10px;
+  vertical-align: bottom;
+}
+.footer-tip{
+  color: #BA2924;
+}
+.el-dialog{
+  margin-top: 8vh;
+}
 </style>
 
 <style>
 .v-note-op{
   background-color: #F6F8FA !important;
-}
-.v-note-wrapper{
-  z-index: 800;
 }
 [type="button"]{
   -webkit-appearance: unset;

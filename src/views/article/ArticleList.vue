@@ -3,14 +3,14 @@
     <el-row>
       <el-col :span="24">
         <el-table
-          :data="tableData.filter(data => !search || data.id.toString().toLowerCase().includes(search.toLowerCase())||
+          :data="tableData.filter(data => !search || data.articleId.toString().toLowerCase().includes(search.toLowerCase())||
             data.title.toLowerCase().includes(search.toLowerCase()))"
           height="600"
           border
           style="width: 100%"
         >
           <el-table-column
-            prop="id"
+            prop="articleId"
             label="No."
             width="60"
           />
@@ -18,6 +18,11 @@
             prop="title"
             label="文章标题"
             width="180"
+          />
+          <el-table-column
+            prop="author.nickname"
+            label="作者"
+            width="120"
           />
           <!--          <el-table-column-->
           <!--            prop="category"-->
@@ -37,7 +42,7 @@
           <el-table-column
             prop="originalType"
             label="类型"
-            width="120"
+            width="100"
             sortable
             :filters="[{ text: '原创', value: '原创' }, { text: '转载', value: '转载' }]"
             :filter-method="filterLabel"
@@ -61,13 +66,13 @@
             prop="readTimes"
             label="浏览量"
             sortable
-            width="120"
+            width="100"
           />
           <el-table-column
             prop="readTimes"
             label="点赞量"
             sortable
-            width="120"
+            width="100"
           />
           <el-table-column
             align="center"
@@ -151,7 +156,7 @@ export default {
       return row.category === value
     },
     onEditRow(index, row) {
-      this.$router.push('/article/detail/' + row.id)
+      this.$router.push('/article/detail/' + row.articleId)
     },
     onSaveEditRow() {
       const _this = this

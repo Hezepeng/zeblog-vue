@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <mavon-editor ref="md2" :hljs="true" :codeStyle="codeStyle" :subfield="false" :default-open="defaultData" :toolbars-flag="false" :box-shadow="false" :navigation="true" v-html="html" />
+    <mavon-editor ref="md2" :hljs="true" :code-style="codeStyle" :subfield="false" :default-open="defaultData" :toolbars-flag="false" :box-shadow="false" :navigation="true" v-html="html" />
   </div>
 </template>
 
@@ -47,5 +47,10 @@ export default {
 .submit-button {
   margin: 0 0 0 1rem;
 }
-
+.el-radio{
+  margin-right: 1rem;
+}
+.v-note-wrapper{
+  z-index: 800;
+}
 </style>

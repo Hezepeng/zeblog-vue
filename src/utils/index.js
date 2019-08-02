@@ -132,3 +132,29 @@ export function closeWindow() {
   }
   window.close()
 }
+
+/**
+ * 将对象的所有属性值设置成null
+ * @param obj
+ */
+export function setPropertyNull(obj) {
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      obj[key] = null
+    }
+  }
+  return obj
+}
+
+/**
+ * 将对象的所有属性值设置成空字符串
+ * @param obj
+ */
+export function setPropertyEmpty(obj) {
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      obj[key] = ''
+    }
+  }
+  return obj
+}
