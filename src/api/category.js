@@ -31,6 +31,13 @@ export function getUserCategory() {
   })
 }
 
+export function getUserCategoryWithArticle() {
+  return request({
+    url: '/category/getUserCategoryWithArticle',
+    method: 'get'
+  })
+}
+
 export function getCategoryById(categoryId) {
   return request({
     url: '/category/getCategoryById',

@@ -243,6 +243,19 @@ export const asyncRouterMap = [
           icon: 'addteam',
           noCache: true
         } // 页面需要的权限
+      },
+      {
+        path: 'edit/:articleId',
+        component: () => import('@/views/article/ArticleEdit'),
+        name: 'ArticleEdit',
+        alwaysShow: false,
+        hidden: true,
+        meta: {
+          role: ['admin', 'editor'],
+          title: '编辑文章',
+          icon: 'addteam',
+          noCache: true
+        } // 页面需要的权限
       }
     ]
   },

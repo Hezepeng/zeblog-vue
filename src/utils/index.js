@@ -123,7 +123,7 @@ export function deepCopy(obj) {
  * 关闭当前浏览器窗口
  */
 export function closeWindow() {
-  const userAgent = navigator.userAgent;
+  const userAgent = navigator.userAgent
   if (userAgent.indexOf('Firefox') !== -1 || userAgent.indexOf('Chrome') !== -1) {
     location.href = 'about:blank'
   } else {
@@ -134,16 +134,21 @@ export function closeWindow() {
 }
 
 /**
- * 将对象的所有属性值设置成null
+ * 复制对象 ，将对象的所有属性值设置成null
  * @param obj
  */
 export function setPropertyNull(obj) {
+  const result = Array.isArray(obj) ? [] : {}
   for (const key in obj) {
     if (obj.hasOwnProperty(key)) {
-      obj[key] = null
+      if (typeof obj[key] === 'object') {
+        result[key] = deepCopy(obj[key]) // 递归复制
+      } else {
+        result[key] = null
+      }
     }
   }
-  return obj
+  return result
 }
 
 /**
@@ -151,10 +156,15 @@ export function setPropertyNull(obj) {
  * @param obj
  */
 export function setPropertyEmpty(obj) {
+  const result = Array.isArray(obj) ? [] : {}
   for (const key in obj) {
     if (obj.hasOwnProperty(key)) {
-      obj[key] = ''
+      if (typeof obj[key] === 'object') {
+        result[key] = deepCopy(obj[key]) // 递归复制
+      } else {
+        result[key] = ''
+      }
     }
   }
-  return obj
+  return result
 }

@@ -10,11 +10,9 @@ export function addArticle(article) {
 
 export function updateArticle(article) {
   return request({
-    url: '/article/updateArticle',
+    url: '/article/update',
     method: 'post',
-    data: {
-      article
-    }
+    data: article
   })
 }
 
@@ -22,9 +20,7 @@ export function deleteArticle(article) {
   return request({
     url: '/article/deleteArticle',
     method: 'post',
-    data: {
-      article
-    }
+    data: article
   })
 }
 

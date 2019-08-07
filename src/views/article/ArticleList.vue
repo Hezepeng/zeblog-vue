@@ -45,7 +45,7 @@
             width="100"
             sortable
             :filters="[{ text: '原创', value: '原创' }, { text: '转载', value: '转载' }]"
-            :filter-method="filterLabel"
+            :filter-method="filterOriginalType"
             filter-placement="bottom-end"
           >
             <template slot-scope="scope">
@@ -62,6 +62,23 @@
             sortable
             width="180"
           />
+          <el-table-column
+            prop="state"
+            label="状态"
+            width="100"
+            sortable
+            :filters="[{ text: '草稿', value: 0 }, { text: '公开', value: 1 },{ text: '私密', value: 2 }]"
+            :filter-method="filterState"
+            filter-placement="bottom-end"
+          >
+            <template slot-scope="scope">
+              <el-tag
+                :type="scope.row.state === 0 ? 'primary' : scope.row.state === 1 ? 'success' : 'danger'"
+                disable-transitions
+              >{{ scope.row.state === 0 ? '草稿' : scope.row.state === 1 ? '公开' : '私密' }}
+              </el-tag>
+            </template>
+          </el-table-column>
           <el-table-column
             prop="readTimes"
             label="浏览量"
@@ -88,13 +105,13 @@
               <el-button
                 size="mini"
                 type="primary"
-                @click="onEditRow(scope.$index, scope.row)"
+                @click="onViewRow(scope.$index, scope.row)"
               >查看
               </el-button>
               <el-button
                 size="mini"
                 type="success"
-                @click="onDeleteRow(scope.$index, scope.row)"
+                @click="onEditRow(scope.$index, scope.row)"
               >编辑
               </el-button>
               <el-button
@@ -126,7 +143,6 @@
 </template>
 
 <script>
-import { deepCopy } from '@/utils'
 import { deleteArticle, getArticleList, updateArticle } from '@/api/article'
 
 export default {
@@ -149,14 +165,20 @@ export default {
   },
 
   methods: {
-    filterLabel(value, row) {
+    filterOriginalType(value, row) {
       return row.originalType === value
+    },
+    filterState(value, row) {
+      return row.state === value
     },
     filterCategory(value, row) {
       return row.category === value
     },
-    onEditRow(index, row) {
+    onViewRow(index, row) {
       this.$router.push('/article/detail/' + row.articleId)
+    },
+    onEditRow(index, row) {
+      this.$router.push('/article/edit/' + row.articleId)
     },
     onSaveEditRow() {
       const _this = this

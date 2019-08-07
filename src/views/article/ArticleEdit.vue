@@ -14,7 +14,7 @@
               :value="key"
             />
           </el-select>
-          <el-button size="medium" type="primary" @click="showDialog=true">发表文章</el-button>
+          <el-button size="medium" type="primary" @click="showDialog=true">更新文章</el-button>
         </el-col>
       </el-form-item>
     </el-form>
@@ -24,7 +24,7 @@
 
     <!-- TODO 尝试将dialog单独写成组件 -->
     <div v-if="showDialog">
-      <el-dialog title="发布文章" top="8vh" width="50%" :visible.sync="showDialog" center>
+      <el-dialog title="更新文章" top="8vh" width="50%" :visible.sync="showDialog" center>
         <el-form ref="form" label-position="left" :model="article" label-width="80px" :rules="formRules" style="padding: 0 2rem">
           <el-form-item label="文章标题" prop="title">
             <el-col :span="18">
@@ -53,8 +53,8 @@
             <el-button v-else class="button-new-tag" size="mini" @click="showTagInput">+ New Tag</el-button>
           </el-form-item>
           <el-form-item label="文章分类" prop="categories">
-            <el-checkbox-group v-model="article.categories">
-              <el-checkbox v-for="(item,key) in userCategory" :key="key" :label="item">{{ item.categoryName }}</el-checkbox>
+            <el-checkbox-group v-model="userCategoryChecked" @change="handleCheckedCategoryChange">
+              <el-checkbox v-for="(item,key) in userCategory" :key="key" :label="item.categoryId">{{ item.categoryName }}</el-checkbox>
             </el-checkbox-group>
           </el-form-item>
           <el-form-item label="文章类型" prop="originalType">
@@ -91,7 +91,7 @@
         <div slot="footer" class="dialog-footer">
           <el-button type="danger" @click="onCancelDialog()">取 消</el-button>
           <el-button @click="onSaveToDrafts()">保存为草稿</el-button>
-          <el-button type="primary" @click="onSubmit()">发布文章</el-button>
+          <el-button type="primary" @click="onSubmit()">更新</el-button>
         </div>
       </el-dialog>
     </div>
@@ -100,37 +100,16 @@
 
 <script>
 import { Message } from 'element-ui'
-import { addArticle, uploadImage } from '@/api/article'
+import { getArticleById, updateArticle, uploadImage } from '@/api/article'
 const mavonEditor = require('mavon-editor')
 import 'mavon-editor/dist/css/index.css'
 import { getUserCategory } from '@/api/category'
 export default {
-  name: 'NewMavonEditor',
+  name: 'ArticleEdit',
   components: { 'mavonEditor': mavonEditor.mavonEditor },
   data() {
-    const validCategories = (rule, value, callback) => {
-      if (!value) {
-        callback(new Error('请选择文章归档分类'))
-      } else if (value.length === 0) {
-        callback(new Error('请选择文章归档分类'))
-      } else if (value.length > 8) {
-        callback(new Error('最多选择8个文章分类'))
-      } else {
-        callback()
-      }
-    }
-    const validTags = (rule, value, callback) => {
-      if (!value) {
-        callback(new Error('请添加文章关键词标签'))
-      } else if (value.length === 0) {
-        callback(new Error('请添加文章关键词标签'))
-      } else if (value.length > 8) {
-        callback(new Error('最多添加8个文章关键词标签'))
-      } else {
-        callback()
-      }
-    }
     return {
+      articleId: null,
       article: {
         title: '',
         codeStyle: '',
@@ -150,12 +129,12 @@ export default {
         state: 1
       },
       tags: ['Java'],
+      userCategoryChecked: [],
+      userCategoryCheckboxOptions: [],
       userCategory: [],
       formRules: {
         title: [{ required: true, trigger: 'blur', message: '文章名不能为空' }],
         originalType: [{ required: true, trigger: 'blur', message: '请选择文章类型' }],
-        categories: [{ required: true, trigger: 'blur', validator: validCategories }],
-        tags: [{ required: true, trigger: 'blur', validator: validTags }],
         state: [{ required: true, trigger: 'blur', message: '请选择是否公开' }]
       },
       inputVisible: false,
@@ -289,8 +268,20 @@ export default {
   },
 
   mounted: function() {
+    this.articleId = this.$route.params.articleId
+    getArticleById(this.articleId).then(response => {
+      this.article = response.data
+      // 初始化tag和category为null的情况
+      this.article.tags = this.article.tags === null ? [] : this.article.tags
+      this.article.categories = this.article.categories === null ? [] : this.article.categories
+      this.userCategoryChecked = this.article.categories.map(item => { return item.categoryId })
+    })
     getUserCategory().then(response => {
       this.userCategory = response.data
+      // 另一种写法
+      // this.userCategory.forEach(item => {
+      //   this.userCategoryCheckboxOptions.push(item.categoryId)
+      // })
     })
   },
 
@@ -302,6 +293,9 @@ export default {
         this.$refs.md.$img2Url(pos, response.data.url)
       })
     },
+    handleCheckedCategoryChange() {
+      console.log(this.userCategoryChecked)
+    },
     onSave(markdown, html) {
       Message.success('已保存到本地草稿箱')
       this.article.markdownContent = markdown
@@ -311,6 +305,13 @@ export default {
     },
     onSubmit() {
       this.$refs.article.validate(valid => {
+        this.article.categories = []
+        console.log(this.userCategory)
+        this.userCategoryChecked.forEach(item => {
+          this.article.categories.push(this.userCategory.find(category => {
+            return category.categoryId === item
+          }))
+        })
         if (this.article.categories.length === 0 || this.article.categories.length > 8) {
           valid = false
           const msg = this.article.categories.length === 0 ? '请选择文章归档分类' : '最多选择8个文章分类'
@@ -331,7 +332,7 @@ export default {
           // 获取markdown格式内容
           this.article.markdownContent = editor.d_value
           this.showDialog = true
-          addArticle(this.article).then(response => {
+          updateArticle(this.article).then(response => {
             Message.success(response.msg)
             this.showDialog = false
             this.$router.push('/article/detail/' + response.data.articleId)
@@ -389,8 +390,8 @@ export default {
   margin: 0 0 0 1rem;
 }
 .submit-button {
-   margin: 0 0 0 1rem;
- }
+  margin: 0 0 0 1rem;
+}
 #editor{
   margin: auto;
   height: 580px;

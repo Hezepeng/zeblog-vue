@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-row>
       <el-col :span="6" style="margin-bottom: 10px">
-        <el-button icon="el-icon-plus" type="primary" @click="onNewRow">新建分类</el-button>
+        <el-button icon="el-icon-plus" type="primary" @click="onShowNewRowDialog">新建分类</el-button>
       </el-col>
     </el-row>
     <el-row>
@@ -25,13 +25,13 @@
             width="500"
           />
           <el-table-column
-            prop="articleCount"
+            prop="articles.length"
             label="文章数"
             width="120"
             sortable
           />
           <el-table-column align="center">
-            <template slot="header">
+            <template slot="header" slot-scope="scope">
               <el-input
                 v-model="search"
                 size="mini"
@@ -42,13 +42,7 @@
               <el-button
                 size="mini"
                 type="primary"
-                @click="onEditRow(scope.$index, scope.row)"
-              >顶置
-              </el-button>
-              <el-button
-                size="mini"
-                type="success"
-                @click="onDeleteRow(scope.$index, scope.row)"
+                @click="onShowEditRowDialog(scope.$index, scope.row)"
               >编辑
               </el-button>
               <el-button
@@ -72,7 +66,7 @@
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="onCancelNewRow()">取 消</el-button>
-          <el-button type="primary" @click="onNewRow()">添加</el-button>
+          <el-button type="primary" @click="onSaveNewRow()">添加</el-button>
         </div>
       </el-dialog>
     </div>
@@ -100,9 +94,14 @@
 </template>
 
 <script>
-import { deleteArticle, updateArticle } from '@/api/article'
-import { getUserCategory } from '@/api/category'
-import { setPropertyNull } from '@/utils'
+import {
+  addCategory,
+  deleteCategory,
+  getUserCategoryWithArticle,
+  updateCategory
+} from '@/api/category'
+import { deepCopy, setPropertyNull } from '@/utils'
+import { Message } from 'element-ui'
 
 export default {
   name: 'CategoryList',
@@ -113,7 +112,6 @@ export default {
       search: '',
       showNewDialog: false,
       showEditDialog: false,
-      editRow: null,
       newCategory: {
         categoryName: ''
       },
@@ -127,7 +125,7 @@ export default {
 
   mounted: function() {
     const _this = this
-    getUserCategory().then(response => {
+    getUserCategoryWithArticle().then(response => {
       _this.tableData = response.data
     })
   },
@@ -139,46 +137,69 @@ export default {
     filterCategory(value, row) {
       return row.category === value
     },
-    onNewRow() {
+    // 显示新建分类弹窗
+    onShowNewRowDialog() {
       this.newCategory = setPropertyNull(this.newCategory)
       this.showNewDialog = true
     },
-    onEditRow(index, row) {
-      this.editCategory = row
-      this.showEditDialog = true
+    // 保存新建分类
+    onSaveNewRow() {
+      this.$refs.newRow.validate(valid => {
+        if (valid) {
+          addCategory(this.newCategory).then(response => {
+            // 获取返回的新增数据的对象
+            const data = response.data
+            data['articles'] = []
+            // table新增一行数据
+            this.tableData.push(data)
+          }).then(() => {
+            Message.success('添加成功')
+            this.showNewDialog = false
+          })
+        }
+      })
     },
+    // 取消新建分类 退出弹窗
     onCancelNewRow() {
       this.newCategory = setPropertyNull(this.newCategory)
       this.showNewDialog = false
     },
+    // 显示当前行编辑分类弹窗
+    onShowEditRowDialog(index, row) {
+      this.editCategory = deepCopy(row)
+      this.showEditDialog = true
+    },
+    // 取消当前行对分类的编辑 退出弹窗
     onCancelEditRow() {
       this.editCategory = setPropertyNull(this.editCategory)
       this.showEditDialog = false
     },
+    // 保存对当前行分类的编辑更改
     onSaveEditRow() {
       const _this = this
-      const row = this.editRow
-      updateArticle(this.editRow).then(response => {
-        console.log(this.editRow.username)
+      const row = this.editCategory
+      console.log(this.editCategory)
+      updateCategory(row).then(response => {
         this.tableData.filter(function(item) {
-          if (item.id === row.id) {
-            item.remark = row.remark
+          if (item.categoryId === row.categoryId) {
+            item.categoryName = row.categoryName
             _this.$message({
-              message: '保存成功！',
+              message: '修改成功',
               type: 'success',
               center: true,
               duration: 2000
             })
           }
-          return item.id === row.id
+          return item.categoryId === row.categoryId
         })
       }).then(() => {
-        _this.editRow = null
-        _this.showDialog = false
+        _this.editRow = setPropertyNull(this.editCategory)
+        _this.showEditDialog = false
       })
     },
+    // 删除行数据
     onDeleteRow(index, row) {
-      deleteArticle(row).then(response => {
+      deleteCategory(row).then(response => {
         this.tableData.splice(this.tableData.indexOf(row), 1)
         this.$message({
           message: '删除成功！',
