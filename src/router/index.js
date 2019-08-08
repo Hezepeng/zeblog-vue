@@ -76,43 +76,6 @@ export const constantRouterMap = [
 // 异步挂载的路由
 // 动态需要根据权限加载的路由表
 export const asyncRouterMap = [
-  {
-    path: '/permission',
-    component: Layout,
-    name: 'Permission',
-    redirect: '/permission/admin',
-    alwaysShow: true,
-    meta: {
-      title: '权限测试页面',
-      icon: 'nested',
-      role: ['admin']
-    },
-    children: [
-      {
-        path: 'admin',
-        component: () => import('@/views/permission/RootPermission'),
-        name: 'RootPermission',
-        meta: {
-          role: ['admin', 'super_editor'],
-          title: '权限测试',
-          icon: 'checklist',
-          noCache: true
-          // 页面需要的权限
-        }
-      },
-      {
-        path: 'child',
-        component: () => import('@/views/permission/AdminPage'),
-        name: 'AdminPage',
-        meta: {
-          role: ['admin', 'super_editor'],
-          title: '子权限测试页',
-          icon: 'addteam',
-          noCache: true
-        } // 页面需要的权限
-      }
-    ]
-  },
 
   // 个人模块
   {
@@ -123,7 +86,7 @@ export const asyncRouterMap = [
         path: 'edit',
         name: 'UserEdit',
         component: () => import('@/views/user/UserEdit'),
-        meta: { title: '个人信息', icon: 'nested' }
+        meta: { title: '个人信息', icon: 'icon_namecard_fill' }
       }
     ]
   },
@@ -137,7 +100,7 @@ export const asyncRouterMap = [
     alwaysShow: true,
     meta: {
       title: '用户管理',
-      icon: 'nested',
+      icon: 'icon_meeting_fill',
       role: ['admin', 'editor']
     },
     children: [
@@ -148,7 +111,7 @@ export const asyncRouterMap = [
         meta: {
           role: ['admin'],
           title: '添加用户',
-          icon: 'checklist',
+          icon: 'icon_newapplication_',
           noCache: true
           // 页面需要的权限
         }
@@ -160,7 +123,7 @@ export const asyncRouterMap = [
         meta: {
           role: ['admin', 'editor'],
           title: '用户列表',
-          icon: 'addteam',
+          icon: 'nested',
           noCache: true
         } // 页面需要的权限
       }
@@ -176,7 +139,7 @@ export const asyncRouterMap = [
     alwaysShow: true,
     meta: {
       title: '分类管理',
-      icon: 'nested',
+      icon: 'tree',
       role: ['admin', 'editor']
     },
     children: [
@@ -187,7 +150,7 @@ export const asyncRouterMap = [
         meta: {
           role: ['admin','editor'],
           title: '分类列表',
-          icon: 'checklist',
+          icon: 'icon_newgroup_fill',
           noCache: true
           // 页面需要的权限
         }
@@ -204,7 +167,7 @@ export const asyncRouterMap = [
     alwaysShow: true,
     meta: {
       title: '文章管理',
-      icon: 'nested',
+      icon: 'icon_invite_fill',
       role: ['admin', 'editor']
     },
     children: [
@@ -215,7 +178,7 @@ export const asyncRouterMap = [
         meta: {
           role: ['admin', 'editor'],
           title: '新建博文',
-          icon: 'checklist',
+          icon: 'form',
           noCache: false
           // 页面需要的权限
         }
@@ -227,7 +190,7 @@ export const asyncRouterMap = [
         meta: {
           role: ['admin', 'editor'],
           title: '博文列表',
-          icon: 'addteam',
+          icon: 'table',
           noCache: true
         } // 页面需要的权限
       },
@@ -256,6 +219,104 @@ export const asyncRouterMap = [
           icon: 'addteam',
           noCache: true
         } // 页面需要的权限
+      }
+    ]
+  },
+
+  // 评论模块
+  {
+    path: '/comment',
+    component: Layout,
+    name: 'Comment',
+    redirect: '/category/list',
+    alwaysShow: true,
+    meta: {
+      title: '评论管理',
+      icon: 'icon_message_fill',
+      role: ['admin', 'editor']
+    },
+    children: [
+      {
+        path: 'list',
+        component: () => import('@/views/category/CategoryList'),
+        name: 'CommentList',
+        meta: {
+          role: ['admin','editor'],
+          title: '评论列表',
+          icon: 'icon_newgroup_fill',
+          noCache: true
+          // 页面需要的权限
+        }
+      }
+    ]
+  },
+
+  // 轮播模块
+  {
+    path: '/carousel',
+    component: Layout,
+    name: 'Carousel',
+    redirect: '/category/list',
+    alwaysShow: true,
+    meta: {
+      title: '轮播管理',
+      icon: 'icon_photo_fill',
+      role: ['admin', 'editor']
+    },
+    children: [
+      {
+        path: 'list',
+        component: () => import('@/views/category/CategoryList'),
+        name: 'CarouselList',
+        meta: {
+          role: ['admin','editor'],
+          title: '轮播列表',
+          icon: 'icon_work_fill',
+          noCache: true
+          // 页面需要的权限
+        }
+      }
+    ]
+  },
+
+  // 友情链接模块
+  {
+    path: '/link',
+    component: Layout,
+    name: 'Link',
+    redirect: '/category/list',
+    alwaysShow: true,
+    meta: {
+      title: '友情链接',
+      icon: 'icon_shakehands_fill',
+      role: ['admin', 'editor']
+    },
+    children: [
+      {
+        path: 'list',
+        component: () => import('@/views/category/CategoryList'),
+        name: 'LinkList',
+        meta: {
+          role: ['admin','editor'],
+          title: '链接列表',
+          icon: 'link',
+          noCache: true
+          // 页面需要的权限
+        }
+      }
+    ]
+  },
+
+  // 网站设置模块
+  {
+    path: '/setting',
+    component: Layout,
+    children: [
+      {
+        path: 'edit',
+        name: 'Setting',
+        component: () => import('@/views/user/UserEdit'),
+        meta: { title: '网站设置', icon: 'icon_setting_fill' }
       }
     ]
   },

@@ -18,7 +18,7 @@ export function updateArticle(article) {
 
 export function deleteArticle(article) {
   return request({
-    url: '/article/deleteArticle',
+    url: '/article/delete',
     method: 'post',
     data: article
   })

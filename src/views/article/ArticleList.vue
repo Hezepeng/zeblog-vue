@@ -17,13 +17,13 @@
           <el-table-column
             prop="title"
             label="文章标题"
-            width="180"
+            width="300"
           />
-          <el-table-column
-            prop="author.nickname"
-            label="作者"
-            width="120"
-          />
+          <!--          <el-table-column-->
+          <!--            prop="author.nickname"-->
+          <!--            label="作者"-->
+          <!--            width="120"-->
+          <!--          />-->
           <!--          <el-table-column-->
           <!--            prop="category"-->
           <!--            label="文章分类"-->
@@ -33,12 +33,12 @@
           <!--            :filter-method="filterCategory"-->
           <!--            filter-placement="bottom-end"-->
           <!--          />-->
-          <el-table-column
-            prop="codeStyle"
-            label="代码风格"
-            sortable
-            width="120"
-          />
+          <!--          <el-table-column-->
+          <!--            prop="codeStyle"-->
+          <!--            label="代码风格"-->
+          <!--            sortable-->
+          <!--            width="120"-->
+          <!--          />-->
           <el-table-column
             prop="originalType"
             label="类型"
@@ -203,13 +203,43 @@ export default {
       })
     },
     onDeleteRow(index, row) {
-      deleteArticle(row).then(response => {
-        this.tableData.splice(this.tableData.indexOf(row), 1)
+      const articleInfo = []; const msg = []
+      articleInfo.push('要删除的文章信息如下')
+      articleInfo.push('文章名：' + row.title)
+      articleInfo.push('创建时间：' + row.createTime)
+      // articleInfo.push('浏览量 ：' + row.readTimes)
+      articleInfo.push('此操作将永久删除该文章信息, 是否继续?')
+      const h = this.$createElement
+      for (const i in articleInfo) {
+        if (articleInfo.hasOwnProperty(i)) {
+          if (articleInfo[i].indexOf('文章名') !== -1) {
+            msg.push(h('p', { style: 'color: #F56C6C' }, articleInfo[i]))
+          } else {
+            msg.push(h('p', null, articleInfo[i]))
+          }
+        }
+      }
+      this.$confirm('警告提示', {
+        title: '警告提示',
+        message: h('div', null, msg),
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        center: true
+      }).then(() => {
+        deleteArticle(row).then(response => {
+          this.tableData.splice(this.tableData.indexOf(row), 1)
+          this.$message({
+            message: response.msg,
+            type: 'success',
+            center: true,
+            duration: 2000
+          })
+        })
+      }).catch(() => {
         this.$message({
-          message: '删除成功！',
-          type: 'success',
-          center: true,
-          duration: 2000
+          type: 'info',
+          message: '已取消删除'
         })
       })
     }
