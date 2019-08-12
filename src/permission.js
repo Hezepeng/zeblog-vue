@@ -6,7 +6,7 @@ import 'nprogress/nprogress.css' // progress bar style
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
-const whiteList = ['/login'] // 不重定向白名单
+const whiteList = ['/login', '/blog/home'] // 不重定向白名单
 
 router.beforeEach((to, from, next) => {
   NProgress.start()

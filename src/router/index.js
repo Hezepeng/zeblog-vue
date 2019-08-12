@@ -38,6 +38,11 @@ export const constantRouterMap = [
     hidden: true
   },
   {
+    path: '/blog/home',
+    component: () => import('@/views/blog/Home'),
+    hidden: true
+  },
+  {
     path: '/',
     component: Layout,
     redirect: '/dashboard',
