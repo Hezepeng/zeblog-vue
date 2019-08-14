@@ -10,6 +10,7 @@
   "dependencies": {
     "axios": "^0.18.1",
     "core-js": "^2.6.9",
+    "cos-js-sdk-v5": "^0.5.17",
     "element-ui": "^2.11.1",
     "js-cookie": "^2.2.0",
     "mavon-editor": "^2.7.5",

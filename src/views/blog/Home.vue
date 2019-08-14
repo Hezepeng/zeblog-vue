@@ -30,8 +30,9 @@
       <el-row :gutter="20">
         <el-col :span="18">
           <el-carousel :interval="5000" trigger="click" height="350px">
-            <el-carousel-item v-for="item in 4" :key="item">
-              <h3>{{ item }}</h3>
+            <el-carousel-item v-for="item in carouselList" :key="item">
+              <el-image :src="item" fit="fill">
+              </el-image>
             </el-carousel-item>
           </el-carousel>
         </el-col>
@@ -53,16 +54,16 @@
             <div class="line" />
             <el-row :gutter="20">
               <el-col :span="6" style="font-size: 40px">
-                <svg-icon icon-class="icon_QQ"></svg-icon>
+                <svg-icon icon-class="icon_QQ" />
               </el-col>
               <el-col :span="6" style="font-size: 40px">
-                <svg-icon icon-class="icon_weichat"></svg-icon>
+                <svg-icon icon-class="icon_weichat" />
               </el-col>
               <el-col :span="6" style="font-size: 40px">
-                <svg-icon icon-class="icon_xinlang"></svg-icon>
+                <svg-icon icon-class="icon_xinlang" />
               </el-col>
               <el-col :span="6" style="font-size: 40px">
-                <svg-icon icon-class="icon_Qzone"></svg-icon>
+                <svg-icon icon-class="icon_Qzone" />
               </el-col>
             </el-row>
             <el-row :gutter="20" style="margin-top: 20px">
@@ -160,6 +161,7 @@ export default {
       activeIndex: '1',
       activeIndex2: '1',
       avatar: 'https://hezepeng-1252705718.cos.ap-guangzhou.myqcloud.com/icon/1%20%2817%29.jpg',
+      carouselList: ['https://zeblog-1252705718.cos.ap-guangzhou.myqcloud.com/carousel/P80923-103050.jpg', 'https://zeblog-1252705718.cos.ap-guangzhou.myqcloud.com/carousel/P80923-103430.jpg'],
       tags: ['Java', 'Vue', 'Spring', 'MVC', '权限验证', '跨域请求', 'WebStorm配置', 'Vue CLI脚手架', '并发处理', '联合查询'],
       hslArray: []
     }

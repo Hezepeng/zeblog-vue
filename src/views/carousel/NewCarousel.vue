@@ -10,26 +10,29 @@
         <el-col :span="8">
           <el-upload
             ref="upload"
+            :multiple="false"
             :headers="{ 'X-Token': getCookiesToken() }"
-            action="https://jsonplaceholder.typicode.com/posts/"
-            list-type="picture-card"
             :file-list="fileList"
+            action=""
+            :limit="1"
             :on-preview="handlePictureCardPreview"
             :on-remove="handleRemove"
+            :before-remove="handleBeforeRemove"
+            :on-exceed="handleOnExceed"
             :auto-upload="false"
+            :http-request="submitUpload"
           >
-            <i class="el-icon-plus" />
+            <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+
             <div slot="tip" class="el-upload__tip">
-              只能上传jpg/png文件，且不超过500kb
               <div>
-                <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到COS存储服务器</el-button>
+                <el-button size="small" type="success" @click="$refs.upload.submit()">上传到COS存储服务器</el-button>
               </div>
+              只能上传jpg/png文件，且不超过10MB
+              <el-progress v-show="startUpload" :percentage="uploadProgress" :status="uploadProgress===100?'success':null" />
             </div>
 
           </el-upload>
-          <el-dialog :visible.sync="dialogVisible">
-            <img width="100%" :src="dialogImageUrl" alt="">
-          </el-dialog>
         </el-col>
         <el-col :span="2" />
       </el-form-item>
@@ -71,19 +74,26 @@
       </el-form-item>
       <el-form-item>
         <el-button icon="el-icon-refresh-left" round @click="onReset">重置</el-button>
+        <el-button icon="el-icon-zoom-in" round @click="onPreviewCarousel">预览</el-button>
         <el-button icon="el-icon-finished" type="primary" round :disabled="!formChanged" @click="onSubmit">提交</el-button>
       </el-form-item>
 
     </el-form>
+    <el-dialog :visible.sync="dialogVisible">
+      <el-carousel :interval="5000" arrow="always">
+        <el-carousel-item>
+          <el-image :src="carousel.imgUrl" />
+        </el-carousel-item>
+      </el-carousel>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { addUser, checkPassword } from '@/api/user'
 import { Message } from 'element-ui'
+import { addCarousel } from '@/api/carousel'
+import { uploadFileToCos } from '@/utils/cos'
 import { getToken } from '@/utils/authorize'
-import { getTencentTempToken } from '@/api/common'
-
 export default {
   name: 'NewCarousel',
 
@@ -121,7 +131,13 @@ export default {
       showDialog: false,
       formChanged: false,
       dialogImageUrl: '',
-      dialogVisible: false
+      dialogVisible: false,
+      startUpload: false
+    }
+  },
+  computed: {
+    uploadProgress() {
+      return this.$store.getters.uploadProgress
     }
   },
 
@@ -135,70 +151,34 @@ export default {
     }
   },
   mounted: function() {
-    getTencentTempToken().then(response => {
-      console.log(response.data)
-    })
+
   },
 
   methods: {
-    uploadImage(){
-      // 请求用到的参数
-      var Bucket = 'test-1250000000';
-      var Region = 'ap-guangzhou';
-      var protocol = location.protocol === 'https:' ? 'https:' : 'http:';
-      var prefix = protocol + '//' + Bucket + '.cos.' + Region + '.myqcloud.com/';
-
-      // 对更多字符编码的 url encode 格式
-      var camSafeUrlEncode = function (str) {
-        return encodeURIComponent(str)
-            .replace(/!/g, '%21')
-            .replace(/'/g, '%27')
-            .replace(/\(/g, '%28')
-            .replace(/\)/g, '%29')
-            .replace(/\*/g, '%2A');
-      };
-    },
-    // 上传文件
-    uploadFile (file, callback) {
-      var Key = 'dir/' + file.name; // 这里指定上传目录和文件名
-      getAuthorization({Method: 'PUT', Pathname: '/' + Key}, function (err, info) {
-
-        if (err) {
-          alert(err);
-          return;
-        }
-
-        var auth = info.Authorization;
-        var XCosSecurityToken = info.XCosSecurityToken;
-        var url = prefix + camSafeUrlEncode(Key).replace(/%2F/, '/');
-        var xhr = new XMLHttpRequest();
-        xhr.open('PUT', url, true);
-        xhr.setRequestHeader('Authorization', auth);
-        XCosSecurityToken && xhr.setRequestHeader('x-cos-security-token', XCosSecurityToken);
-        xhr.upload.onprogress = function (e) {
-          console.log('上传进度 ' + (Math.round(e.loaded / e.total * 10000) / 100) + '%');
-        };
-        xhr.onload = function () {
-          if (xhr.status === 200 || xhr.status === 206) {
-            var ETag = xhr.getResponseHeader('etag');
-            callback(null, {url: url, ETag: ETag});
-          } else {
-            callback('文件 ' + Key + ' 上传失败，状态码：' + xhr.status);
-          }
-        };
-        xhr.onerror = function () {
-          callback('文件 ' + Key + ' 上传失败，请检查是否没配置 CORS 跨域规则');
-        };
-        xhr.send(file);
-      });
-    };
     getCookiesToken() {
       return getToken()
     },
-    submitUpload() {
-      const upload = this.$refs.upload
-      console.log(upload)
-      this.$refs.upload.submit()
+    onPreviewCarousel() {
+      this.dialogVisible = true
+    },
+    handleOnExceed() {
+      Message.warning('单个轮播只能上传一张图片')
+    },
+    handleBeforeRemove(file, fileList) {
+      return this.$confirm(`确定移除 ${file.name}？`)
+    },
+    submitUpload(fileInfo) {
+      console.log(fileInfo)
+      this.startUpload = true
+      uploadFileToCos(fileInfo.file).then(response => {
+        // Message.info('开始压缩图片并上传')
+        this.carousel.imgUrl = response.url
+      }).then(() => {
+        // const thumb = compressImg(fileInfo.file, 0.2)
+        // uploadFileToCos(thumb)
+      }).catch(error => {
+        Message.error(error)
+      })
     },
     handlePreview(file) {
       console.log(file)
@@ -223,7 +203,7 @@ export default {
     onSubmit() {
       this.$refs.form.validate(valid => {
         if (valid) {
-          addUser(this.form).then(response => {
+          addCarousel(this.form).then(response => {
             this.$message({
               message: response.msg,
               type: 'success',

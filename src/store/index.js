@@ -5,6 +5,7 @@ import getters from '@/store/getters'
 import routePermission from '@/store/modules/routePermission'
 import app from '@/store/modules/app'
 import settings from '@/store/modules/settings'
+import common from '@/store/modules/common'
 
 Vue.use(Vuex)
 
@@ -13,7 +14,8 @@ const store = new Vuex.Store({
     user,
     app,
     routePermission,
-    settings
+    settings,
+    common
   },
   getters
 })

@@ -270,12 +270,36 @@ export const asyncRouterMap = [
     },
     children: [
       {
+        path: 'new',
+        component: () => import('@/views/carousel/NewCarousel'),
+        name: 'NewCarousel',
+        meta: {
+          role: ['admin'],
+          title: '新建轮播',
+          icon: 'icon_work_fill',
+          noCache: true
+          // 页面需要的权限
+        }
+      },
+      {
         path: 'list',
-        component: () => import('@/views/category/CategoryList'),
+        component: () => import('@/views/carousel/CarouselList'),
         name: 'CarouselList',
         meta: {
-          role: ['admin','editor'],
+          role: ['admin'],
           title: '轮播列表',
+          icon: 'icon_work_fill',
+          noCache: true
+          // 页面需要的权限
+        }
+      },
+      {
+        path: 'upload',
+        component: () => import('@/views/carousel/UploadImage'),
+        name: 'UploadImage',
+        meta: {
+          role: ['admin'],
+          title: '上传图片',
           icon: 'icon_work_fill',
           noCache: true
           // 页面需要的权限
