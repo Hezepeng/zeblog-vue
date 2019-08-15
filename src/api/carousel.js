@@ -31,6 +31,14 @@ export function getCarouselList() {
   })
 }
 
+export function getCarouselById(carouselId) {
+  return request({
+    url: '/carousel/get',
+    method: 'get',
+    params: { carouselId }
+  })
+}
+
 export function uploadImage(image) {
   return request({
     url: '/carousel/uploadImage',

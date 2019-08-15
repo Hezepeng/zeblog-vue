@@ -233,7 +233,7 @@ export const asyncRouterMap = [
     path: '/comment',
     component: Layout,
     name: 'Comment',
-    redirect: '/category/list',
+    redirect: '/',
     alwaysShow: true,
     meta: {
       title: '评论管理',
@@ -294,12 +294,13 @@ export const asyncRouterMap = [
         }
       },
       {
-        path: 'upload',
-        component: () => import('@/views/carousel/UploadImage'),
-        name: 'UploadImage',
+        path: 'edit/:carouselId',
+        component: () => import('@/views/carousel/CarouselEdit'),
+        name: 'CarouselEdit',
+        hidden: true,
         meta: {
           role: ['admin'],
-          title: '上传图片',
+          title: '编辑轮播',
           icon: 'icon_work_fill',
           noCache: true
           // 页面需要的权限

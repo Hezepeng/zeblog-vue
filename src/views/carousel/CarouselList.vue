@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-row>
       <el-col :span="6" style="margin-bottom: 10px">
-        <el-button icon="el-icon-plus" type="primary" @click="router.push('/carousel/add')">新建轮播</el-button>
+        <el-button icon="el-icon-plus" type="primary" @click="$router.push('/carousel/new')">新建轮播</el-button>
       </el-col>
     </el-row>
     <el-row>
@@ -23,11 +23,12 @@
           <el-table-column
             prop="thumbnailUrl"
             label="图片"
-            width="150"
+            width="190"
+            align="center"
           >
             <template slot-scope="scope">
               <el-image
-                style="width: 80px; height: 80px"
+                style="width: 160px; height: 90px"
                 :src="scope.row.thumbnailUrl"
                 fit="fill"
               />
@@ -160,10 +161,9 @@ export default {
       return row.isTop === value
     },
     onViewRow(index, row) {
-      this.$router.push('/article/detail/' + row.articleId)
     },
     onEditRow(index, row) {
-      this.$router.push('/article/edit/' + row.articleId)
+      this.$router.push('/carousel/edit/' + row.carouselId)
     },
     onSaveEditRow() {
       const _this = this
@@ -190,21 +190,15 @@ export default {
     onDeleteRow(index, row) {
       const articleInfo = []
       const msg = []
-      articleInfo.push('要删除的文章信息如下')
-      articleInfo.push('文章名：' + row.title)
-      articleInfo.push('创建时间：' + row.createTime)
+      articleInfo.push('要删除的轮播信息如下')
+      articleInfo.push('标题：' + row.title)
       // articleInfo.push('浏览量 ：' + row.readTimes)
-      articleInfo.push('此操作将永久删除该文章信息, 是否继续?')
+      articleInfo.push('此操作将永久删除该轮播信息, 是否继续?')
       const h = this.$createElement
-      for (const i in articleInfo) {
-        if (articleInfo.hasOwnProperty(i)) {
-          if (articleInfo[i].indexOf('文章名') !== -1) {
-            msg.push(h('p', { style: 'color: #F56C6C' }, articleInfo[i]))
-          } else {
-            msg.push(h('p', null, articleInfo[i]))
-          }
-        }
-      }
+      msg.push(h('p', null, '要删除的轮播信息如下'))
+      msg.push(h('p', null, '标题：' + row.title))
+      msg.push(h('img', { style: 'height:90px;width:160px', attrs: { src: row.thumbnailUrl }}, null))
+      msg.push(h('p', null, '此操作将永久删除该轮播信息, 是否继续?'))
       this.$confirm('警告提示', {
         title: '警告提示',
         message: h('div', null, msg),

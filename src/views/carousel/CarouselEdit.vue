@@ -6,7 +6,7 @@
           <el-input v-model="carousel.title" />
         </el-col>
       </el-form-item>
-      <el-form-item label="上传图片">
+      <el-form-item label="替换图片">
         <el-col :span="8">
           <el-upload
             ref="upload"
@@ -24,7 +24,7 @@
             list-type="picture"
             :http-request="submitUpload"
           >
-            <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+            <el-button slot="trigger" size="small" type="primary">选取新的轮播图片</el-button>
 
             <div slot="tip" class="el-upload__tip">
               <div>
@@ -87,7 +87,7 @@
       <el-form-item>
         <el-button icon="el-icon-refresh-left" round @click="onReset">重置</el-button>
         <el-button icon="el-icon-zoom-in" round @click="onPreviewCarousel">预览</el-button>
-        <el-button icon="el-icon-finished" type="primary" round :disabled="!formChanged" @click="onSubmit">提交</el-button>
+        <el-button icon="el-icon-finished" type="primary" round :disabled="!formChanged" @click="onSubmit">更新</el-button>
       </el-form-item>
 
     </el-form>
@@ -182,18 +182,26 @@
 
 <script>
 import { Message } from 'element-ui'
-import { addCarousel } from '@/api/carousel'
+import { addCarousel, getCarouselById, updateCarousel } from '@/api/carousel'
 import { uploadFileToCos } from '@/utils/cos'
 import { getToken } from '@/utils/authorize'
-import { compressImg } from '@/utils'
+import { compressImg, deepCopy } from '@/utils'
 import { getArticleList } from '@/api/article'
 export default {
-  name: 'NewCarousel',
+  name: 'CarouselEdit',
 
   data() {
     return {
       search: '',
       message: '',
+      originalCarousel: {
+        title: '',
+        imgUrl: '',
+        thumbnailUrl: '',
+        redirectUrl: null,
+        rank: 0,
+        isTop: false
+      },
       carousel: {
         title: '',
         imgUrl: '',
@@ -247,6 +255,11 @@ export default {
   },
   mounted: function() {
     this.clearUploadProgress()
+    const carouselId = this.$route.params.carouselId
+    getCarouselById(carouselId).then(response => {
+      this.carousel = response.data
+      this.originalCarousel = deepCopy(response.data)
+    })
   },
   destroy: function() {
     this.clearUploadProgress()
@@ -305,24 +318,31 @@ export default {
         return
       }
       this.startUpload = true
-      uploadFileToCos(fileInfo.file).then(response => {
-        this.carousel.imgUrl = response.url
-        Message.success('原图上传成功')
-      }).then(() => {
-        const quality = 1 / (Math.round(fileInfo.file.size / 1024 / 1024 + 1)) / 4
-        console.log(quality)
-        compressImg(fileInfo.file, quality).then(compressFile => {
-          Message.info('开始生成压缩图片并上传...')
-          uploadFileToCos(compressFile).then(response => {
-            Message.success('压缩图上传成功')
-            this.carousel.thumbnailUrl = response.url
+      try {
+        uploadFileToCos(fileInfo.file).then(response => {
+          this.carousel.imgUrl = response.url
+          Message.success('原图上传成功')
+        }).then(() => {
+          const quality = 1 / (Math.round(fileInfo.file.size / 1024 / 1024 + 1)) / 4
+          console.log(quality)
+          compressImg(fileInfo.file, quality).then(compressFile => {
+            Message.info('开始生成压缩图片并上传...')
+            uploadFileToCos(compressFile).then(response => {
+              Message.success('压缩图上传成功')
+              this.carousel.thumbnailUrl = response.url
+            }).catch(error => {
+              Message.error(error)
+            })
+          }).catch(error => {
+            Message.error(error)
           })
         }).catch(error => {
           Message.error(error)
         })
-      }).catch(error => {
-        Message.error(error)
-      })
+      }catch (e) {
+        Message.error(e)
+      }
+
     },
     // 移除上传列表文件的钩子
     handleRemove(file, fileList) {
@@ -337,14 +357,7 @@ export default {
 
     // 重置表单
     onReset() {
-      this.carousel = {
-        title: '',
-        imgUrl: '',
-        thumbnailUrl: '',
-        redirectUrl: null,
-        rank: 0,
-        isTop: false
-      }
+      this.carousel = deepCopy(this.originalCarousel)
       this.formChanged = false
       // 清除所有校验结果
       this.$refs.form.clearValidate()
@@ -353,11 +366,12 @@ export default {
       // 清空上传进度条信息
       this.clearUploadProgress()
     },
+
     // 提交表单
     onSubmit() {
       this.$refs.form.validate(valid => {
         if (valid) {
-          addCarousel(this.carousel).then(response => {
+          updateCarousel(this.carousel).then(response => {
             this.$message({
               message: response.msg,
               type: 'success',

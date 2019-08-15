@@ -168,3 +168,56 @@ export function setPropertyEmpty(obj) {
   }
   return result
 }
+
+/**
+ * 利用canvas压缩图片
+ */
+export function compressImg(file, quality) {
+  console.log(file)
+  let compressFile = null
+  const fileName = file.name.substring(0, file.name.indexOf('.'))
+  const fileType = file.name.substring(file.name.indexOf('.'))
+  const newFileName = fileName + '_compress' + fileType
+  console.log(newFileName)
+  return new Promise((resolve, reject) => {
+    try {
+      const reader = new FileReader()
+      reader.readAsDataURL(file)
+      reader.onload = function(e) {
+        const image = new Image() // 新建一个img标签（还没嵌入DOM节点)
+        image.src = e.target.result
+        image.onload = function() {
+          const canvas = document.createElement('canvas')
+          const context = canvas.getContext('2d')
+          const imageWidth = image.width * quality // 压缩后图片的大小
+          const imageHeight = image.height * quality
+          canvas.width = imageWidth
+          canvas.height = imageHeight
+          context.drawImage(image, 0, 0, imageWidth, imageHeight)
+          const blob = dataURLtoBlob(canvas.toDataURL('image/png', quality))
+          compressFile = new File([blob], newFileName, { type: 'image/png' })
+          console.log(compressFile)
+          resolve(compressFile)
+        }
+      }
+    } catch (e) {
+      reject('图片压缩出现异常')
+    }
+  })
+}
+
+/**
+ * base64转Blob对象
+ * @param dataurl base64字符串
+ * @returns {Blob}
+ */
+function dataURLtoBlob(dataurl) {
+  var arr = dataurl.split(',')
+  var mime = arr[0].match(/:(.*?);/)[1]
+  var bstr = atob(arr[1])
+  var n = bstr.length; var u8arr = new Uint8Array(n)
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n)
+  }
+  return new Blob([u8arr], { type: mime })
+}
