@@ -106,7 +106,7 @@
                 size="mini"
                 type="primary"
                 @click="onViewRow(scope.$index, scope.row)"
-              >查看
+              >预览
               </el-button>
               <el-button
                 size="mini"
@@ -175,7 +175,7 @@ export default {
       return row.category === value
     },
     onViewRow(index, row) {
-      this.$router.push('/article/detail/' + row.articleId)
+      this.$router.push('/article/preview/' + row.articleId)
     },
     onEditRow(index, row) {
       this.$router.push('/article/edit/' + row.articleId)

@@ -43,6 +43,11 @@ export const constantRouterMap = [
     hidden: true
   },
   {
+    path: '/blog/article/detail/:articleId',
+    component: () => import('@/views/article/ArticleDetail'),
+    hidden: true
+  },
+  {
     path: '/',
     component: Layout,
     redirect: '/dashboard',
@@ -200,7 +205,7 @@ export const asyncRouterMap = [
         } // 页面需要的权限
       },
       {
-        path: 'detail/:articleId',
+        path: 'preview/:articleId',
         component: () => import('@/views/article/ArticleDetail'),
         name: 'ArticleDetail',
         alwaysShow: false,
@@ -242,8 +247,20 @@ export const asyncRouterMap = [
     },
     children: [
       {
+        path: 'add',
+        component: () => import('@/views/comment/NewComment'),
+        name: 'NewComment',
+        meta: {
+          role: ['admin','editor'],
+          title: '新建评论',
+          icon: 'icon_newgroup_fill',
+          noCache: true
+          // 页面需要的权限
+        }
+      },
+      {
         path: 'list',
-        component: () => import('@/views/category/CategoryList'),
+        component: () => import('@/views/comment/CommentList'),
         name: 'CommentList',
         meta: {
           role: ['admin','editor'],
@@ -261,7 +278,7 @@ export const asyncRouterMap = [
     path: '/carousel',
     component: Layout,
     name: 'Carousel',
-    redirect: '/category/list',
+    redirect: '/carousel/list',
     alwaysShow: true,
     meta: {
       title: '轮播管理',

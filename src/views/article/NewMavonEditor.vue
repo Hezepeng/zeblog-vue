@@ -18,7 +18,7 @@
         </el-col>
       </el-form-item>
     </el-form>
-    <div id="editor">
+    <div id="editor" style="overflow: scroll !important;">
       <mavon-editor ref="md" v-model="article.markdownContent" :ishljs="true" :box-shadow="false" :code-style="article.codeStyle" @imgAdd="imgAdd" @save="onSave" />
     </div>
 

@@ -89,7 +89,7 @@ service.interceptors.response.use(async(response) => {
 },
 // TODO 访问到不存在的api时 会无限弹出ERROR
 error => {
-  // console.log('err' + error) // for debug
+  console.log('err' + error) // for debug
   Message({
     message: error.msg,
     type: 'error',
@@ -98,5 +98,4 @@ error => {
   return Promise.reject(error)
 }
 )
-
 export default service

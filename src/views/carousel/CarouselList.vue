@@ -17,7 +17,7 @@
           <el-table-column
             prop="carouselId"
             label="No."
-            width="60"
+            width="50"
           />
 
           <el-table-column
@@ -49,11 +49,9 @@
           <el-table-column
             prop="isTop"
             label="顶置"
-            width="100"
+            width="80"
             sortable
-            :filters="[{ text: '是', value: 'true' }, { text: '否', value: 'false' }]"
-            :filter-method="filterIsTop"
-            filter-placement="bottom-end"
+            align="center"
           >
             <template slot-scope="scope">
               <el-tag
@@ -68,7 +66,7 @@
             prop="rank"
             label="优先级"
             sortable
-            width="120"
+            width="100"
           />
 
           <el-table-column
@@ -188,12 +186,7 @@ export default {
       })
     },
     onDeleteRow(index, row) {
-      const articleInfo = []
       const msg = []
-      articleInfo.push('要删除的轮播信息如下')
-      articleInfo.push('标题：' + row.title)
-      // articleInfo.push('浏览量 ：' + row.readTimes)
-      articleInfo.push('此操作将永久删除该轮播信息, 是否继续?')
       const h = this.$createElement
       msg.push(h('p', null, '要删除的轮播信息如下'))
       msg.push(h('p', null, '标题：' + row.title))

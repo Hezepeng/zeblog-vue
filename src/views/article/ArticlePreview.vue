@@ -11,7 +11,7 @@ const mavonEditor = require('mavon-editor')
 import 'mavon-editor/dist/css/index.css'
 
 export default {
-  name: 'ArticleDetail',
+  name: 'ArticlePreview',
   components: { 'mavonEditor': mavonEditor.mavonEditor },
 
   data() {
