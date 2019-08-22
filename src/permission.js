@@ -6,7 +6,7 @@ import 'nprogress/nprogress.css' // progress bar style
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
-const whiteList = ['/login', '/blog/home'] // 不重定向白名单
+const whiteList = ['/login', '/blog/home', '/article/detail/:article'] // 不重定向白名单
 
 router.beforeEach((to, from, next) => {
   NProgress.start()
@@ -42,7 +42,8 @@ router.beforeEach((to, from, next) => {
       }
     }
   } else {
-    if (whiteList.indexOf(to.path) !== -1) {
+    console.log(to.path)
+    if (whiteList.indexOf(to.path) !== -1 || to.path.startsWith('/blog')) {
       // 在免登录白名单，直接进入
       next()
     } else {
