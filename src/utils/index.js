@@ -109,7 +109,7 @@ export function deepCopy(obj) {
   const result = Array.isArray(obj) ? [] : {}
   for (const key in obj) {
     if (obj.hasOwnProperty(key)) {
-      if (typeof obj[key] === 'object') {
+      if (typeof obj[key] === 'object' && obj[key] !== null) {
         result[key] = deepCopy(obj[key]) // 递归复制
       } else {
         result[key] = obj[key]
@@ -141,8 +141,8 @@ export function setPropertyNull(obj) {
   const result = Array.isArray(obj) ? [] : {}
   for (const key in obj) {
     if (obj.hasOwnProperty(key)) {
-      if (typeof obj[key] === 'object') {
-        result[key] = deepCopy(obj[key]) // 递归复制
+      if (typeof obj[key] === 'object' && obj[key] !== null) {
+        result[key] = setPropertyNull(obj[key]) // 递归设置为null
       } else {
         result[key] = null
       }
@@ -159,8 +159,8 @@ export function setPropertyEmpty(obj) {
   const result = Array.isArray(obj) ? [] : {}
   for (const key in obj) {
     if (obj.hasOwnProperty(key)) {
-      if (typeof obj[key] === 'object') {
-        result[key] = deepCopy(obj[key]) // 递归复制
+      if (typeof obj[key] === 'object' && obj[key] !== null) {
+        result[key] = setPropertyEmpty(obj[key]) // 递归设置为空字符串
       } else {
         result[key] = ''
       }
