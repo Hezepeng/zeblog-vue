@@ -24,19 +24,24 @@ export function deleteComment(comment) {
   })
 }
 
-export function getArticleCommentList() {
+export function getArticleCommentByArticleId() {
   return request({
-    url: '/comment/list',
-    method: 'get',
-    params: { commentType: 'article' }
+    url: '/comment/getCommentByArticleId',
+    method: 'get'
   })
 }
 
-export function getMessageCommentList() {
+export function getAllComment() {
   return request({
-    url: '/comment/list',
-    method: 'get',
-    params: { commentType: 'message' }
+    url: '/comment/getAllComment',
+    method: 'get'
+  })
+}
+
+export function getAllMessage() {
+  return request({
+    url: '/comment/getAllMessage',
+    method: 'get'
   })
 }
 
@@ -45,14 +50,5 @@ export function getCommentById(commentId) {
     url: '/comment/getCommentById',
     method: 'get',
     params: { commentId }
-  })
-}
-
-export function uploadImage(image) {
-  return request({
-    url: '/comment/uploadImage',
-    method: 'post',
-    headers: { 'Content-Type': 'multipart/form-data' },
-    data: image
   })
 }
