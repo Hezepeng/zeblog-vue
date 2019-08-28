@@ -7,10 +7,9 @@ export function getTencentTempToken() {
   })
 }
 
-export function updateArticle(article) {
+export function getTencentQuickLoginUrl() {
   return request({
-    url: '/article/update',
-    method: 'post',
-    data: article
+    url: '/user/qqQuickLogin',
+    method: 'get',
   })
 }

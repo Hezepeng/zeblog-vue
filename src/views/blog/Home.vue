@@ -24,15 +24,15 @@
         </el-submenu>
         <el-menu-item index="3" disabled>标签页</el-menu-item>
         <el-menu-item index="4" @click="$router.push('/login')"><a target="_blank">管理后台</a></el-menu-item>
+        <el-menu-item style="float: right" index="5" @click="redirectToQQlogin"><svg-icon style="width: 30px;height: 30px;vertical-align: middle" icon-class="qq_login" /></el-menu-item>
       </el-menu>
     </el-header>
-    <el-main>
+    <el-main>:
       <el-row :gutter="20">
         <el-col :span="18">
           <el-carousel :interval="5000" trigger="click" height="350px">
             <el-carousel-item v-for="item in carouselList" :key="item">
-              <el-image :src="item" fit="fill">
-              </el-image>
+              <el-image :src="item" fit="fill" />
             </el-carousel-item>
           </el-carousel>
         </el-col>
@@ -153,6 +153,8 @@
 </template>
 
 <script>
+import { getTencentQuickLoginUrl } from '@/api/common'
+
 export default {
   name: 'Home',
 
@@ -188,6 +190,12 @@ export default {
   mounted: function() {
   },
   methods: {
+    // 跳转到qq互联快捷登录页面
+    redirectToQQlogin() {
+      getTencentQuickLoginUrl().then(response => {
+        window.location.href = response.data
+      })
+    },
     handleSelect(key, keyPath) {
       console.log(key, keyPath)
     },
