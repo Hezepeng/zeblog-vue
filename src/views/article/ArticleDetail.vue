@@ -5,7 +5,6 @@
 </template>
 
 <script>
-import { Message } from 'element-ui'
 import { getArticleById } from '@/api/article'
 const mavonEditor = require('mavon-editor')
 import 'mavon-editor/dist/css/index.css'

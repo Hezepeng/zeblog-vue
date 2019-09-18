@@ -18,7 +18,7 @@
         </el-col>
       </el-form-item>
     </el-form>
-    <div id="editor" style="overflow: scroll !important;">
+    <div id="editor">
       <mavon-editor ref="md" v-model="article.markdownContent" :ishljs="true" :box-shadow="false" :code-style="article.codeStyle" @imgAdd="imgAdd" @save="onSave" />
     </div>
 
@@ -395,6 +395,7 @@ export default {
   margin: auto;
   height: 580px;
   z-index: 800;
+  overflow: scroll !important;
 }
 .el-radio{
   margin-right: 1rem;

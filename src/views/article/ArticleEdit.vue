@@ -335,7 +335,7 @@ export default {
           updateArticle(this.article).then(response => {
             Message.success(response.msg)
             this.showDialog = false
-            this.$router.push('/article/detail/' + response.data.articleId)
+            this.$router.push('/blog/article/detail/' + response.data.articleId)
           }).catch(() => {})
         }
       })
@@ -396,6 +396,7 @@ export default {
   margin: auto;
   height: 580px;
   z-index: 800;
+  overflow: scroll !important;
 }
 .el-radio{
   margin-right: 1rem;

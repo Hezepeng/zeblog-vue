@@ -27,10 +27,11 @@ function getNetworkIp() {
   return needHost
 }
 
-process.env.VUE_APP_BASE_API = 'http://' + getNetworkIp() + process.env.VUE_APP_BASE_API
+// 自动设置启动的内网IP
+// process.env.VUE_APP_BASE_API = 'http://' + getNetworkIp() + process.env.VUE_APP_BASE_API
 console.log(process.env.VUE_APP_BASE_API)
 module.exports = {
-  publicPath: '/',
+  publicPath: '/vue/',
   outputDir: 'dist',
   assetsDir: 'static',
   lintOnSave: process.env.NODE_ENV === 'development',

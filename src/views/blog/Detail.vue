@@ -24,95 +24,40 @@
         </el-submenu>
         <el-menu-item index="3" disabled>标签页</el-menu-item>
         <el-menu-item index="4" @click="$router.push('/login')"><a target="_blank">管理后台</a></el-menu-item>
-        <el-menu-item style="float: right" index="5" @click="redirectToQQlogin">
-          <svg-icon style="width: 30px;height: 30px;vertical-align: middle" icon-class="qq_login" />
-        </el-menu-item>
+        <el-menu-item style="float: right" index="5" @click="redirectToQQlogin"><svg-icon style="width: 30px;height: 30px;vertical-align: middle" icon-class="qq_login" /></el-menu-item>
       </el-menu>
     </el-header>
+    <el-row style="padding: 0px">
+      <el-col :span="24">
+        <el-carousel :interval="5000" trigger="click" height="350px">
+          <el-carousel-item v-for="item in carouselList" :key="item">
+            <el-image :src="item" fit="fill" />
+          </el-carousel-item>
+        </el-carousel>
+      </el-col>
+    </el-row>
     <el-main>
+
       <el-row :gutter="20">
         <el-col :span="18">
-          <el-carousel :interval="5000" trigger="click" height="350px">
-            <el-carousel-item v-for="item in carouselList" :key="item">
-              <el-image :src="item" fit="fill" />
-            </el-carousel-item>
-          </el-carousel>
-        </el-col>
-        <el-col :span="6">
-          <el-card class="userinfo-card" :body-style="{ padding: '0 10px 10px 10px' }">
-            <div slot="header" class="clearfix">
-              <div style="float: left">
-                <el-image
-                  style="width: 80px; height: 80px"
-                  :src="avatar"
-                  fit="fill"
-                />
-              </div>
-              <div style="text-align: left;position: relative;margin-left: 5rem;font-size:0.9rem;padding-left: 20px">
-                <p>何泽鹏</p>
-                <p>Java开发工程师</p>
-              </div>
-            </div>
-            <div class="line" />
-            <el-row :gutter="20">
-              <el-col :span="6" style="font-size: 40px">
-                <svg-icon icon-class="icon_QQ" />
-              </el-col>
-              <el-col :span="6" style="font-size: 40px">
-                <svg-icon icon-class="icon_weichat" />
-              </el-col>
-              <el-col :span="6" style="font-size: 40px">
-                <svg-icon icon-class="icon_xinlang" />
-              </el-col>
-              <el-col :span="6" style="font-size: 40px">
-                <svg-icon icon-class="icon_Qzone" />
-              </el-col>
-            </el-row>
-            <el-row :gutter="20" style="margin-top: 20px">
-              <el-col v-for="o in 3" :key="o" :span="8">
-                <div style="background: #B5C0CF;height: auto;text-align: center">
-                  <p style="line-height: 20px;padding-top: 5px;margin: 0 auto;font-size: 13px">留言</p>
-                  <p style="line-height: 20px;padding-bottom:5px;margin: 0 auto;font-size: 13px">20</p>
-                </div>
-              </el-col>
-            </el-row>
-            <el-row style="margin-top: 20px">
-              <div style="background: #589EF8;height: auto;text-align: center;">
-                <p style="line-height: 20px;padding-top: 5px;margin: 0 auto;font-size: 13px">博客已上线运行</p>
-                <p style="line-height: 20px;padding-bottom:5px;margin: 0 auto;font-size: 13px">第 3 天</p>
-              </div>
-            </el-row>
-          </el-card>
-        </el-col>
-      </el-row>
-      <el-row :gutter="20">
-        <el-col :span="18">
-          <el-row v-for="article in articleList" :key="article.articleId" style="margin-top: 30px">
+          <el-row>
             <el-col :span="24">
               <el-card class="box-card" :body-style="{ padding: '0px' }">
                 <div class="article-title-card">
-                  <router-link to="/blog/article/detail/1"><span>{{ article.title }}</span></router-link>
+                  <span>{{ article.title }}</span>
                   <div class="tag-info">
-                    <span v-for="(key,tag) in article.tags" :key="key">{{ tag.tagName }}</span>
+                    <span v-for="(tag,key) in article.tags" :key="key">{{ tag.tagName }}</span>
                   </div>
                 </div>
                 <div class="article-content-card">
-                  <p>{{ article.htmlContent }}</p>
-                  <div class="remark">
-                    <span><svg-icon
-                      style="margin-right:5px;"
-                      icon-class="icon_calendar_fill"
-                    />{{article.createTime}}</span>
-                    <span><svg-icon style="margin:0 5px;" icon-class="eye-open" />article.readTimes</span>
-                    <span><svg-icon style="margin:0 5px;" icon-class="icon_message_fill" />article.thumbsUpTimes</span>
-                  </div>
+                  <mavon-editor ref="md2" :hljs="true" :code-style="codeStyle" :subfield="false" :default-open="defaultData" :toolbars-flag="false" :box-shadow="false" :navigation="true" v-html="html" />
                 </div>
               </el-card>
             </el-col>
           </el-row>
         </el-col>
         <el-col :span="6">
-          <el-row style="margin-top: 30px">
+          <el-row>
             <el-col>
               <el-card class="right-card">
                 <div slot="header" style="text-align: left">
@@ -146,11 +91,9 @@
     </el-main>
     <el-footer>
       <div style="text-align: center">
-        <p style="margin:10px 0 5px 0;line-height:16px;font-size: 14px">Copyright © 2019 hezepeng.com
-          鄂ICP备16020493号-1</p>
+        <p style="margin:10px 0 5px 0;line-height:16px;font-size: 14px">Copyright © 2019 hezepeng.com 鄂ICP备16020493号-1</p>
         <p style="margin:5px 0 10px 0;line-height:16px;font-size: 14px">Powered by
-          <svg-icon icon-class="github" />
-          <a href="https://www.github.com/Hezepeng">Hezepeng</a>
+          <svg-icon icon-class="github" /> <a href="https://www.github.com/Hezepeng">Hezepeng</a>
         </p>
       </div>
     </el-footer>
@@ -159,11 +102,11 @@
 
 <script>
 import { getTencentQuickLoginUrl } from '@/api/common'
-import { getArticleList } from '@/api/article'
-
+import { getArticleById } from '@/api/article'
+const mavonEditor = require('mavon-editor')
 export default {
-  name: 'Home',
-
+  name: 'Detail',
+  components: { 'mavonEditor': mavonEditor.mavonEditor },
   data() {
     return {
       activeIndex: '1',
@@ -172,7 +115,11 @@ export default {
       carouselList: ['https://zeblog-1252705718.cos.ap-guangzhou.myqcloud.com/carousel/P80923-103050.jpg', 'https://zeblog-1252705718.cos.ap-guangzhou.myqcloud.com/carousel/P80923-103430.jpg'],
       tags: ['Java', 'Vue', 'Spring', 'MVC', '权限验证', '跨域请求', 'WebStorm配置', 'Vue CLI脚手架', '并发处理', '联合查询'],
       hslArray: [],
-      articleList: []
+      articleId: '',
+      codeStyle: '',
+      html: '',
+      defaultData: 'preview',
+      article: {}
     }
   },
   computed: {
@@ -195,8 +142,11 @@ export default {
     this.hslArray = this.getHslArray()
   },
   mounted: function() {
-    getArticleList().then(response => {
-      this.articleList = response.data
+    this.articleId = this.$route.params.articleId
+    getArticleById(this.articleId).then(response => {
+      this.html = response.data.htmlContent
+      this.codeStyle = response.data.codeStyle === null ? 'xcode' : response.data.codeStyle
+      this.article = response.data
     })
   },
   methods: {
@@ -298,7 +248,7 @@ export default {
   text-align: center;
 }
 
-.el-carousel__indicators--horizontal .el-carousel__indicators {
+.el-carousel__indicators--horizontal .el-carousel__indicators{
   line-height: 60px;
 }
 
@@ -331,12 +281,10 @@ export default {
 .text {
   font-size: 14px;
 }
-
 .item {
   margin-bottom: 18px;
 }
-
-.article-title-card {
+.article-title-card{
   padding: 20px;
   font-size: 22px;
   color: #ffffff;
@@ -345,36 +293,31 @@ export default {
   /*background-image: linear-gradient(60deg, #03A9F4 0%, #8fb7e0 37%, #2cacd1 65%, #9bd2f1 100%);*/
   background-image: linear-gradient(60deg, #03A9F4 0%, #8fb7e0 37%, #bda6dc 65%, #9bd2f1 100%)
 }
-
-.article-title-card > .tag-info {
+.article-title-card > .tag-info{
   line-height: 15px;
   margin: 10px 0 0 0;
   font-size: 13px;
   color: #e4e4e4;
   text-align: center;
 }
-
-.tag-info > span {
+.tag-info > span{
   padding: 2px 10px;
   /*background-color: #1482f0;*/
   /*border-radius: 13px;*/
 }
-
-.article-content-card {
+.article-content-card{
   text-align: left;
   padding: 20px;
   font-size: 16px;
   color: #898989;
   line-height: 24px;
 }
-
-.article-content-card > p {
+.article-content-card > p{
   margin: 0;
   padding: 0 0 10px 0;
   border-bottom: 1px solid #edf1f2;
 }
-
-.article-content-card > .remark {
+.article-content-card > .remark{
   margin: 0;
   text-align: left;
   color: #B4B4B4;
@@ -382,31 +325,27 @@ export default {
   line-height: 15px;
   padding: 10px 0 0 0;
 }
-
-.right-card {
+.right-card{
   display: block;
   overflow: hidden;
 }
-
-.hot-article-list {
+.hot-article-list{
   font-size: 14px;
   line-height: 18px;
   text-align: left;
   color: #20a0ff;
 }
-
-.hot-article-list > p:first-child {
+.hot-article-list > p:first-child{
   margin: 0;
 }
-
-.hot-article-list > p {
+.hot-article-list > p{
   margin: 10px 0;
 }
 
-.hot-tag-list {
+.hot-tag-list{
 }
 
-.hot-tag-list > a {
+.hot-tag-list > a{
   display: inline-block;
   min-width: 10px;
   vertical-align: middle;
@@ -425,7 +364,6 @@ export default {
   display: table;
   content: "";
 }
-
 .clearfix:after {
 
   clear: both;

@@ -7,9 +7,10 @@ export function getTencentTempToken() {
   })
 }
 
-export function getTencentQuickLoginUrl() {
+export function getTencentQuickLoginUrl(redirect_url) {
   return request({
     url: '/user/qqQuickLogin',
     method: 'get',
+    params: { redirect_url }
   })
 }

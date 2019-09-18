@@ -44,7 +44,7 @@ export const constantRouterMap = [
   },
   {
     path: '/blog/article/detail/:articleId',
-    component: () => import('@/views/article/ArticleDetail'),
+    component: () => import('@/views/blog/Detail'),
     hidden: true
   },
   {
@@ -375,7 +375,9 @@ export const asyncRouterMap = [
 const createRouter = () => new Router({
   // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
-  routes: constantRouterMap
+  routes: constantRouterMap,
+  mode: 'history',
+  base: '/vue/'
 })
 
 const router = createRouter()
