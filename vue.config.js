@@ -31,8 +31,8 @@ function getNetworkIp() {
 // process.env.VUE_APP_BASE_API = 'http://' + getNetworkIp() + process.env.VUE_APP_BASE_API
 console.log(process.env.VUE_APP_BASE_API)
 module.exports = {
-  publicPath: '/vue/',
-  outputDir: 'dist',
+  publicPath: '/',
+  outputDir: 'zeblog-vue',
   assetsDir: 'static',
   lintOnSave: process.env.NODE_ENV === 'development',
   productionSourceMap: false,
@@ -60,7 +60,11 @@ module.exports = {
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
     // it can be accessed in index.html to inject the correct title.
-    name: name
+    name: name,
+    externals: {
+      'vue': 'Vue',
+      'element-ui': 'ELEMENT'
+    }
   },
   chainWebpack: config => {
     // 添加别名
