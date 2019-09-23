@@ -48,6 +48,9 @@
                   <div class="tag-info">
                     <span v-for="(tag,key) in article.tags" :key="key">{{ tag.tagName }}</span>
                   </div>
+                  <div class="author-info">
+                    <span>{{ article.author.nickname }}</span>
+                  </div>
                 </div>
                 <div class="article-content-card">
                   <mavon-editor ref="md2" :hljs="true" :code-style="codeStyle" :subfield="false" :default-open="defaultData" :toolbars-flag="false" :box-shadow="false" :navigation="true" v-html="html" />
@@ -297,9 +300,19 @@ export default {
   line-height: 15px;
   margin: 10px 0 0 0;
   font-size: 13px;
-  color: #e4e4e4;
+  color: #f0f0f0;
   text-align: center;
 }
+
+.article-title-card > .author-info{
+  line-height: 15px;
+  margin: 10px 0 0 0;
+  font-size: 13px;
+  color: #f0f0f0;
+  font-weight: bold;
+  text-align: center;
+}
+
 .tag-info > span{
   padding: 2px 10px;
   /*background-color: #1482f0;*/

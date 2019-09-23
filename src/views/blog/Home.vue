@@ -91,20 +91,20 @@
             <el-col :span="24">
               <el-card class="box-card" :body-style="{ padding: '0px' }">
                 <div class="article-title-card">
-                  <router-link to="/blog/article/detail/1"><span>{{ article.title }}</span></router-link>
+                  <router-link :to="'/blog/article/detail/'+article.articleId"><span>{{ article.title }}</span></router-link>
                   <div class="tag-info">
-                    <span v-for="(key,tag) in article.tags" :key="key">{{ tag.tagName }}</span>
+                    <span v-for="(key,tag) in article.tags" :key="key"><a @click="onShowTagArticle(tag.tagId)">{{ tag.tagName }}</a></span>
                   </div>
                 </div>
                 <div class="article-content-card">
-                  <p>{{ article.htmlContent }}</p>
+                  <p style="max-height: 195px;overflow: hidden;text-overflow: ellipsis;" v-html="article.htmlContent" />
                   <div class="remark">
                     <span><svg-icon
                       style="margin-right:5px;"
                       icon-class="icon_calendar_fill"
-                    />{{article.createTime}}</span>
-                    <span><svg-icon style="margin:0 5px;" icon-class="eye-open" />article.readTimes</span>
-                    <span><svg-icon style="margin:0 5px;" icon-class="icon_message_fill" />article.thumbsUpTimes</span>
+                    />{{ article.createTime }}</span>
+                    <span><svg-icon style="margin:0 5px;" icon-class="eye-open" />{{ article.readTimes }}</span>
+                    <span><svg-icon style="margin:0 5px;" icon-class="icon_message_fill" />{{ article.thumbsUpTimes }}</span>
                   </div>
                 </div>
               </el-card>
@@ -159,7 +159,7 @@
 
 <script>
 import { getTencentQuickLoginUrl } from '@/api/common'
-import { getArticleList } from '@/api/article'
+import { getArticleByCategoryId, getArticleByTagId, getHomeArticle } from '@/api/article'
 
 export default {
   name: 'Home',
@@ -195,11 +195,17 @@ export default {
     this.hslArray = this.getHslArray()
   },
   mounted: function() {
-    getArticleList().then(response => {
+    getHomeArticle().then(response => {
       this.articleList = response.data
     })
   },
   methods: {
+    onShowTagArticle(tagId) {
+      getArticleByTagId(tagId)
+    },
+    onShowCategoryArticle(categoryId) {
+      getArticleByCategoryId(categoryId)
+    },
     // 跳转到qq互联快捷登录页面
     redirectToQQlogin() {
       const redirect_url = 'http://47.100.207.45:8080/zeblog_war/home/redirect_to_vue'

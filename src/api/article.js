@@ -39,6 +39,29 @@ export function getArticleById(articleId) {
   })
 }
 
+export function getHomeArticle() {
+  return request({
+    url: '/article/getHomeArticle',
+    method: 'get',
+  })
+}
+
+export function getArticleByTagId(tagId) {
+  return request({
+    url: '/article/getArticleByTagId',
+    method: 'get',
+    params: { tagId }
+  })
+}
+
+export function getArticleByCategoryId(categoryId) {
+  return request({
+    url: '/article/getArticleByCategoryId',
+    method: 'get',
+    params: { categoryId }
+  })
+}
+
 export function uploadImage(image) {
   return request({
     url: '/article/uploadImage',
