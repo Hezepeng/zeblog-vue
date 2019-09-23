@@ -27,8 +27,11 @@ function getNetworkIp() {
   return needHost
 }
 
-// 自动设置启动的内网IP
-// process.env.VUE_APP_BASE_API = 'http://' + getNetworkIp() + process.env.VUE_APP_BASE_API
+// 开发环境时，自动设置启动的内网IP
+if (process.env.NODE_ENV === 'development') {
+  process.env.VUE_APP_BASE_API = 'http://' + getNetworkIp() + process.env.VUE_APP_BASE_API
+}
+
 console.log(process.env.VUE_APP_BASE_API)
 module.exports = {
   publicPath: '/',
