@@ -24,72 +24,30 @@
         </el-submenu>
         <el-menu-item index="3" disabled>标签页</el-menu-item>
         <el-menu-item index="4" @click="$router.push('/login')"><a target="_blank">管理后台</a></el-menu-item>
-        <el-menu-item style="float: right" index="5" @click="redirectToQQlogin">
+        <el-menu-item style="right: 0;position: absolute;" index="5" @click="redirectToQQlogin">
           <svg-icon style="width: 30px;height: 30px;vertical-align: middle" icon-class="qq_login" />
         </el-menu-item>
       </el-menu>
     </el-header>
+    <el-row style="padding: 0px">
+      <el-col :span="24">
+        <el-carousel :interval="5000" trigger="click" height="350px">
+          <el-carousel-item v-for="item in carouselList" :key="item">
+            <el-image :src="item" fit="cover" style="height: 350px">
+              <div slot="error" class="image-slot">
+                <i class="el-icon-picture-outline" />
+              </div>
+            </el-image>
+          </el-carousel-item>
+        </el-carousel>
+      </el-col>
+    </el-row>
     <el-main>
       <el-row :gutter="20">
-        <el-col :span="18">
-          <el-carousel :interval="5000" trigger="click" height="350px">
-            <el-carousel-item v-for="item in carouselList" :key="item">
-              <el-image :src="item" fit="fill" />
-            </el-carousel-item>
-          </el-carousel>
-        </el-col>
-        <el-col :span="6">
-          <el-card class="userinfo-card" :body-style="{ padding: '0 10px 10px 10px' }">
-            <div slot="header" class="clearfix">
-              <div style="float: left">
-                <el-image
-                  style="width: 80px; height: 80px"
-                  :src="avatar"
-                  fit="fill"
-                />
-              </div>
-              <div style="text-align: left;position: relative;margin-left: 5rem;font-size:0.9rem;padding-left: 20px">
-                <p>何泽鹏</p>
-                <p>Java开发工程师</p>
-              </div>
-            </div>
-            <div class="line" />
-            <el-row :gutter="20">
-              <el-col :span="6" style="font-size: 40px">
-                <svg-icon icon-class="icon_QQ" />
-              </el-col>
-              <el-col :span="6" style="font-size: 40px">
-                <svg-icon icon-class="icon_weichat" />
-              </el-col>
-              <el-col :span="6" style="font-size: 40px">
-                <svg-icon icon-class="icon_xinlang" />
-              </el-col>
-              <el-col :span="6" style="font-size: 40px">
-                <svg-icon icon-class="icon_Qzone" />
-              </el-col>
-            </el-row>
-            <el-row :gutter="20" style="margin-top: 20px">
-              <el-col v-for="o in 3" :key="o" :span="8">
-                <div style="background: #B5C0CF;height: auto;text-align: center">
-                  <p style="line-height: 20px;padding-top: 5px;margin: 0 auto;font-size: 13px">留言</p>
-                  <p style="line-height: 20px;padding-bottom:5px;margin: 0 auto;font-size: 13px">20</p>
-                </div>
-              </el-col>
-            </el-row>
-            <el-row style="margin-top: 20px">
-              <div style="background: #589EF8;height: auto;text-align: center;">
-                <p style="line-height: 20px;padding-top: 5px;margin: 0 auto;font-size: 13px">博客已上线运行</p>
-                <p style="line-height: 20px;padding-bottom:5px;margin: 0 auto;font-size: 13px">第 3 天</p>
-              </div>
-            </el-row>
-          </el-card>
-        </el-col>
-      </el-row>
-      <el-row :gutter="20">
-        <el-col :span="18">
-          <el-row v-for="article in articleList" :key="article.articleId" style="margin-top: 30px">
+        <el-col :xs="24" :sm="18" :md="18" :lg="18" :xl="18">
+          <el-row v-for="article in articleList" :key="article.articleId" style="margin-bottom: 20px">
             <el-col :span="24">
-              <el-card class="box-card" :body-style="{ padding: '0px' }">
+              <el-card v-loading="loading" class="box-card" :body-style="{ padding: '0px' }">
                 <div class="article-title-card">
                   <router-link :to="'/blog/article/detail/'+article.articleId"><span>{{ article.title }}</span></router-link>
                   <div class="tag-info">
@@ -111,8 +69,55 @@
             </el-col>
           </el-row>
         </el-col>
-        <el-col :span="6">
-          <el-row style="margin-top: 30px">
+        <el-col :xs="24" :sm="6" :md="6" :lg="6" :xl="6">
+          <el-row style="margin-bottom: 20px">
+            <el-card class="userinfo-card" :body-style="{ padding: '0 10px 10px 10px' }">
+              <div slot="header" class="clearfix">
+                <div style="float: left">
+                  <el-image
+                    style="width: 80px; height: 80px"
+                    :src="avatar"
+                    fit="fill"
+                  />
+                </div>
+                <div style="text-align: left;position: relative;margin-left: 5rem;font-size:0.9rem;padding-left: 20px">
+                  <p>何泽鹏</p>
+                  <p>Java开发工程师</p>
+                </div>
+              </div>
+              <div class="line" />
+              <el-row :gutter="20">
+                <el-col :span="6" style="font-size: 40px">
+                  <svg-icon icon-class="icon_QQ" />
+                </el-col>
+                <el-col :span="6" style="font-size: 40px">
+                  <svg-icon icon-class="icon_weichat" />
+                </el-col>
+                <el-col :span="6" style="font-size: 40px">
+                  <svg-icon icon-class="icon_xinlang" />
+                </el-col>
+                <el-col :span="6" style="font-size: 40px">
+                  <svg-icon icon-class="icon_Qzone" />
+                </el-col>
+              </el-row>
+              <el-row :gutter="20" style="margin-top: 20px">
+                <el-col v-for="o in 3" :key="o" :span="8">
+                  <div style="background: #B5C0CF;height: auto;text-align: center">
+                    <p style="line-height: 20px;padding-top: 5px;margin: 0 auto;font-size: 13px">留言</p>
+                    <p style="line-height: 20px;padding-bottom:5px;margin: 0 auto;font-size: 13px">20</p>
+                  </div>
+                </el-col>
+              </el-row>
+              <el-row style="margin-top: 20px">
+                <div style="background: #589EF8;height: auto;text-align: center;">
+                  <p style="line-height: 20px;padding-top: 5px;margin: 0 auto;font-size: 13px">博客已上线运行</p>
+                  <p style="line-height: 20px;padding-bottom:5px;margin: 0 auto;font-size: 13px">第 3 天</p>
+                </div>
+              </el-row>
+            </el-card>
+          </el-row>
+
+          <el-row style="margin-bottom: 20px">
             <el-col>
               <el-card class="right-card">
                 <div slot="header" style="text-align: left">
@@ -120,14 +125,14 @@
                   <el-button style="float: right; padding: 3px 0" type="text">更多</el-button>
                 </div>
                 <div class="hot-article-list">
-                  <p v-for="o in 8" :key="o">
-                    <a href="#">{{ '热门文章标题 ' + o }}</a>
+                  <p v-for="article in articleList" :key="article.articleId">
+                    <router-link :to="'/blog/article/detail/'+article.articleId"><span>{{ article.title }}</span></router-link>
                   </p>
                 </div>
               </el-card>
             </el-col>
           </el-row>
-          <el-row style="margin-top: 30px">
+          <el-row style="margin-bottom: 20px">
             <el-col>
               <el-card class="right-card">
                 <div slot="header" style="text-align: left">
@@ -145,13 +150,22 @@
 
     </el-main>
     <el-footer>
-      <div style="text-align: center">
-        <p style="margin:10px 0 5px 0;line-height:16px;font-size: 14px">Copyright © 2019 hezepeng.com
-          鄂ICP备16020493号-1</p>
-        <p style="margin:5px 0 10px 0;line-height:16px;font-size: 14px">Powered by
-          <svg-icon icon-class="github" />
-          <a href="https://www.github.com/Hezepeng">Hezepeng</a>
-        </p>
+      <div>
+        <el-row justify="center">
+          <el-col>
+            <p style="margin:10px 0 5px 0;line-height:16px;font-size: 14px">Copyright © 2019 鄂ICP备16020493号-4
+            </p>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col>
+            <p style="margin:5px 0 10px 0;line-height:16px;font-size: 14px">Powered by
+              <svg-icon icon-class="github" />
+              <a href="https://www.github.com/Hezepeng">Hezepeng</a>
+            </p>
+          </el-col>
+        </el-row>
+
       </div>
     </el-footer>
   </el-container>
@@ -172,7 +186,8 @@ export default {
       carouselList: ['https://zeblog-1252705718.cos.ap-guangzhou.myqcloud.com/carousel/P80923-103050.jpg', 'https://zeblog-1252705718.cos.ap-guangzhou.myqcloud.com/carousel/P80923-103430.jpg'],
       tags: ['Java', 'Vue', 'Spring', 'MVC', '权限验证', '跨域请求', 'WebStorm配置', 'Vue CLI脚手架', '并发处理', '联合查询'],
       hslArray: [],
-      articleList: []
+      articleList: [],
+      articleLoading: true
     }
   },
   computed: {
@@ -197,6 +212,7 @@ export default {
   mounted: function() {
     getHomeArticle().then(response => {
       this.articleList = response.data
+      this.articleLoading = false
     })
   },
   methods: {
@@ -208,7 +224,7 @@ export default {
     },
     // 跳转到qq互联快捷登录页面
     redirectToQQlogin() {
-      const redirect_url = 'http://47.100.207.45:8080/zeblog_war/home/redirect_to_vue'
+      const redirect_url = window.location.href
       getTencentQuickLoginUrl(redirect_url).then(response => {
         window.location.href = response.data
       })

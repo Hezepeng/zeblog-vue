@@ -31,7 +31,10 @@ export const constantRouterMap = [
     component: () => import('@/views/login/Login'),
     hidden: true
   },
-
+  {
+    path: '/',
+    redirect: '/blog/home'
+  },
   {
     path: '/404',
     component: () => import('@/views/404'),
@@ -46,19 +49,6 @@ export const constantRouterMap = [
     path: '/blog/article/detail/:articleId',
     component: () => import('@/views/blog/Detail'),
     hidden: true
-  },
-  {
-    path: '/',
-    component: Layout,
-    redirect: '/dashboard',
-    children: [
-      {
-        path: 'dashboard',
-        name: 'Dashboard',
-        component: () => import('@/views/home/Home'),
-        meta: { title: '后台管理系统', icon: 'dashboard' }
-      }
-    ]
   }
   // {
   //   path: '/example',

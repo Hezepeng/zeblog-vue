@@ -35,7 +35,7 @@ if (process.env.NODE_ENV === 'development') {
 console.log(process.env.VUE_APP_BASE_API)
 module.exports = {
   publicPath: '/',
-  outputDir: 'zeblog-vue',
+  outputDir: 'dist',
   assetsDir: 'static',
   lintOnSave: process.env.NODE_ENV === 'development',
   productionSourceMap: false,
