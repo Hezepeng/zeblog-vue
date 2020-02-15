@@ -23,8 +23,8 @@
           </el-submenu>
         </el-submenu>
         <el-menu-item index="3" disabled>标签页</el-menu-item>
-        <el-menu-item index="4" @click="$router.push('/login')"><a target="_blank">管理后台</a></el-menu-item>
-        <el-menu-item style="float: right" index="5" @click="redirectToQQlogin"><svg-icon style="width: 30px;height: 30px;vertical-align: middle" icon-class="qq_login" /></el-menu-item>
+<!--        <el-menu-item index="4" @click="$router.push('/login')"><a target="_blank">管理后台</a></el-menu-item>-->
+<!--        <el-menu-item style="float: right" index="5" @click="redirectToQQlogin"><svg-icon style="width: 30px;height: 30px;vertical-align: middle" icon-class="qq_login" /></el-menu-item>-->
       </el-menu>
     </el-header>
     <el-row style="padding: 0px">
@@ -94,7 +94,7 @@
     </el-main>
     <el-footer>
       <div style="text-align: center">
-        <p style="margin:10px 0 5px 0;line-height:16px;font-size: 14px">Copyright © 2019 hezepeng.com 鄂ICP备16020493号-1</p>
+        <p style="margin:10px 0 5px 0;line-height:16px;font-size: 14px">Copyright © 2019 <a href="http://www.beian.miit.gov.cn">鄂ICP备16020493号</a></p>
         <p style="margin:5px 0 10px 0;line-height:16px;font-size: 14px">Powered by
           <svg-icon icon-class="github" /> <a href="https://www.github.com/Hezepeng">Hezepeng</a>
         </p>

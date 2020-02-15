@@ -22,11 +22,11 @@
             <el-menu-item index="2-4-2">算法</el-menu-item>
           </el-submenu>
         </el-submenu>
-        <el-menu-item index="3" disabled>标签页</el-menu-item>
-        <el-menu-item index="4" @click="$router.push('/login')"><a target="_blank">管理后台</a></el-menu-item>
-        <el-menu-item style="right: 0;position: absolute;" index="5" @click="redirectToQQlogin">
-          <svg-icon style="width: 30px;height: 30px;vertical-align: middle" icon-class="qq_login" />
-        </el-menu-item>
+<!--        <el-menu-item index="3" disabled>标签页</el-menu-item>-->
+<!--        <el-menu-item index="4" @click="$router.push('/login')"><a target="_blank">管理后台</a></el-menu-item>-->
+<!--        <el-menu-item style="right: 0;position: absolute;" index="5" @click="redirectToQQlogin">-->
+<!--          <svg-icon style="width: 30px;height: 30px;vertical-align: middle" icon-class="qq_login" />-->
+<!--        </el-menu-item>-->
       </el-menu>
     </el-header>
     <el-row style="padding: 0px">
@@ -103,15 +103,15 @@
               <el-row :gutter="20" style="margin-top: 20px">
                 <el-col v-for="o in 3" :key="o" :span="8">
                   <div style="background: #B5C0CF;height: auto;text-align: center">
-                    <p style="line-height: 20px;padding-top: 5px;margin: 0 auto;font-size: 13px">留言</p>
+                    <p style="line-height: 20px;padding-top: 5px;margin: 0 auto;font-size: 13px">精选</p>
                     <p style="line-height: 20px;padding-bottom:5px;margin: 0 auto;font-size: 13px">20</p>
                   </div>
                 </el-col>
               </el-row>
               <el-row style="margin-top: 20px">
                 <div style="background: #589EF8;height: auto;text-align: center;">
-                  <p style="line-height: 20px;padding-top: 5px;margin: 0 auto;font-size: 13px">博客已上线运行</p>
-                  <p style="line-height: 20px;padding-bottom:5px;margin: 0 auto;font-size: 13px">第 3 天</p>
+                  <p style="line-height: 20px;padding-top: 5px;margin: 0 auto;font-size: 13px">待上线运行</p>
+                  <p style="line-height: 20px;padding-bottom:5px;margin: 0 auto;font-size: 13px">第 x 天</p>
                 </div>
               </el-row>
             </el-card>
@@ -153,7 +153,7 @@
       <div>
         <el-row justify="center">
           <el-col>
-            <p style="margin:10px 0 5px 0;line-height:16px;font-size: 14px">Copyright © 2019 鄂ICP备16020493号-4
+            <p style="margin:10px 0 5px 0;line-height:16px;font-size: 14px">Copyright © 2019 <a href="http://www.beian.miit.gov.cn">鄂ICP备16020493号</a>
             </p>
           </el-col>
         </el-row>
