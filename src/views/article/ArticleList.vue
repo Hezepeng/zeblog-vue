@@ -64,10 +64,10 @@
           />
           <el-table-column
             prop="state"
-            label="状态"
-            width="100"
+            label="发布类型"
+            width="120"
             sortable
-            :filters="[{ text: '草稿', value: 0 }, { text: '公开', value: 1 },{ text: '私密', value: 2 }]"
+            :filters="[{ text: 'HTML', value: 0 }, { text: 'MarkDown', value: 1 }]"
             :filter-method="filterState"
             filter-placement="bottom-end"
           >
@@ -75,7 +75,7 @@
               <el-tag
                 :type="scope.row.state === 0 ? 'primary' : scope.row.state === 1 ? 'success' : 'danger'"
                 disable-transitions
-              >{{ scope.row.state === 0 ? '草稿' : scope.row.state === 1 ? '公开' : '私密' }}
+              >{{ scope.row.state === 0 ? 'HTML' : 'MarkDown' }}
               </el-tag>
             </template>
           </el-table-column>
@@ -85,12 +85,12 @@
             sortable
             width="100"
           />
-          <el-table-column
-            prop="readTimes"
-            label="点赞量"
-            sortable
-            width="100"
-          />
+<!--          <el-table-column-->
+<!--            prop="readTimes"-->
+<!--            label="点赞量"-->
+<!--            sortable-->
+<!--            width="100"-->
+<!--          />-->
           <el-table-column
             align="center"
           >

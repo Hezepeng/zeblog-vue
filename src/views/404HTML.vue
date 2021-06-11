@@ -10,11 +10,11 @@
       <div class="bullshit">
         <div class="bullshit__oops">页面丢失</div>
         <div class="bullshit__info">All rights reserved
-          <a style="color:#20a0ff" href="http://www.hezepeng.com" target="_blank">Hezepeng</a>
+          <a style="color:#20a0ff" href="#" target="_blank">Hezepeng</a>
         </div>
         <div class="bullshit__headline">{{ message }}</div>
         <div class="bullshit__info">请检查URL地址是否正确</div>
-        <a href="/" class="bullshit__return-home" target="_blank">Back to home</a>
+        <a href="http://www.hezepeng.com" class="bullshit__return-home" target="_blank">Back to home</a>
       </div>
     </div>
   </div>
@@ -23,10 +23,10 @@
 <script>
 
 export default {
-  name: 'Page404',
+  name: '404HTML',
   computed: {
     message() {
-      return '没有权限访问此页面 或 页面丢失'
+      return '文章不存在或可能丢失...'
     }
   }
 }

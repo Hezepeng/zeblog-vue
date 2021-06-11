@@ -41,12 +41,17 @@ export const constantRouterMap = [
     hidden: true
   },
   {
+    path: '/html/404/',
+    component: () => import('@/views/404HTML'),
+    hidden: true
+  },
+  {
     path: '/blog/home',
     component: () => import('@/views/blog/Home'),
     hidden: true
   },
   {
-    path: '/blog/article/detail/:articleId',
+    path: '/article/detail/:articleId',
     component: () => import('@/views/blog/Detail'),
     hidden: true
   }
@@ -76,7 +81,19 @@ export const constantRouterMap = [
 // 异步挂载的路由
 // 动态需要根据权限加载的路由表
 export const asyncRouterMap = [
-
+  // 个人模块
+  {
+    path: '/admin/',
+    component: Layout,
+    children: [
+      {
+        path: 'home',
+        name: 'AdminHome',
+        component: () => import('@/views/home/Home'),
+        meta: { title: 'ZeBlog首页', icon: 'icon_airplay' }
+      }
+    ]
+  },
   // 个人模块
   {
     path: '/my',
@@ -148,7 +165,7 @@ export const asyncRouterMap = [
         component: () => import('@/views/category/CategoryList'),
         name: 'CategoryList',
         meta: {
-          role: ['admin','editor'],
+          role: ['admin', 'editor'],
           title: '分类列表',
           icon: 'icon_newgroup_fill',
           noCache: true
@@ -241,7 +258,7 @@ export const asyncRouterMap = [
         component: () => import('@/views/comment/NewComment'),
         name: 'NewComment',
         meta: {
-          role: ['admin','editor'],
+          role: ['admin', 'editor'],
           title: '新建评论',
           icon: 'icon_newgroup_fill',
           noCache: true
@@ -281,7 +298,7 @@ export const asyncRouterMap = [
         component: () => import('@/views/carousel/NewCarousel'),
         name: 'NewCarousel',
         meta: {
-          role: ['admin'],
+          role: ['admin', 'editor'],
           title: '新建轮播',
           icon: 'icon_work_fill',
           noCache: true
@@ -293,7 +310,7 @@ export const asyncRouterMap = [
         component: () => import('@/views/carousel/CarouselList'),
         name: 'CarouselList',
         meta: {
-          role: ['admin'],
+          role: ['admin', 'editor'],
           title: '轮播列表',
           icon: 'icon_work_fill',
           noCache: true
@@ -306,7 +323,7 @@ export const asyncRouterMap = [
         name: 'CarouselEdit',
         hidden: true,
         meta: {
-          role: ['admin'],
+          role: ['admin', 'editor'],
           title: '编辑轮播',
           icon: 'icon_work_fill',
           noCache: true
@@ -321,7 +338,7 @@ export const asyncRouterMap = [
     path: '/link',
     component: Layout,
     name: 'Link',
-    redirect: '/category/list',
+    redirect: '/404',
     alwaysShow: true,
     meta: {
       title: '友情链接',

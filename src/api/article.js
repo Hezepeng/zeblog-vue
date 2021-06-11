@@ -39,10 +39,19 @@ export function getArticleById(articleId) {
   })
 }
 
-export function getHomeArticle() {
+export function getHotArticle() {
   return request({
-    url: '/article/getHomeArticle',
+    url: '/article/getHotArticle',
     method: 'get',
+  })
+}
+
+export function getArticleByPage(page) {
+  return request({
+    url: '/article/getArticleByPage',
+    method: 'get',
+    params: { page }
+
   })
 }
 

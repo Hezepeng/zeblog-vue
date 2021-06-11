@@ -7,7 +7,7 @@
       auto-complete="on"
       label-position="left"
     >
-      <h3 class="title">Hezepeng's vue-admin</h3>
+      <h3 class="title">何泽鹏的个人博客</h3>
       <el-form-item prop="username">
         <!--<span class="svg-container">-->
         <!--<svg-icon icon-class="user" />-->
@@ -46,10 +46,10 @@
           Sign in
         </el-button>
       </el-form-item>
-      <div class="tips">
-        <span style="margin-right:20px;">username: admin</span>
-        <span> password: admin</span>
-      </div>
+<!--      <div class="tips">-->
+<!--        <span style="margin-right:20px;">username: admin</span>-->
+<!--        <span> password: admin</span>-->
+<!--      </div>-->
     </el-form>
   </div>
 </template>
@@ -64,8 +64,8 @@ export default {
     return {
       message: '',
       loginForm: {
-        username: 'admin',
-        password: 'admin'
+        username: '',
+        password: ''
       },
       loading: false,
       pwdType: 'password',
@@ -88,7 +88,7 @@ export default {
           .dispatch('login', this.loginForm)
           .then(() => {
             this.loading = false
-            this.$router.push({ path: this.redirect || '/' })
+            this.$router.push({ path: this.redirect || '/admin/home' })
           })
           .catch(() => {
             this.loading = false

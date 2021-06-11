@@ -4,10 +4,11 @@ import { Message } from 'element-ui'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css'
 import { setToken } from '@/utils/authorize' // progress bar style
+import { asyncRouterMap, constantRouterMap } from '@/router/index.js'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
-const whiteList = ['/login', '/blog/home', '/article/detail/:article'] // 不重定向白名单
+const whiteList = ['/static/html/', '/blog/home', '/article/detail/'] // 不重定向白名单
 
 router.beforeEach((to, from, next) => {
   NProgress.start()
@@ -45,20 +46,29 @@ router.beforeEach((to, from, next) => {
     }
   } else {
     if (to.query.hasOwnProperty('token')) {
-      console.log(to)
       const token = to.query.token
       setToken(token)
       store.commit('SET_TOKEN', token)
       next(to.path)
       NProgress.done()
     } else {
-      if (whiteList.indexOf(to.path) !== -1 || to.path.startsWith('/vue/blog') || to.path.startsWith('/blog')) {
-        // 在免登录白名单，直接进入
+      if (to.path.endsWith('.html') || whiteList.filter((url) => {
+        return to.path.startsWith(url)
+      }).length > 0) {
         next()
-      } else {
-        next('/login') // 否则全部重定向到登录页
         NProgress.done()
+        return
       }
+      for (const route of constantRouterMap) {
+        console.log(to.path)
+        if (route.path === to.path) {
+          next()
+          NProgress.done()
+          return
+        }
+      }
+      next('/login') // 否则全部重定向到登录页
+      NProgress.done()
     }
   }
 })

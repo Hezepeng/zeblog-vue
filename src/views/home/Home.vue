@@ -85,7 +85,8 @@ export default {
   padding: 5%;
   margin: 0 auto;
   /*background-color: #ffffff;*/
-  background-image: linear-gradient(135deg, #45c5ff 0%, #03A9F4 75%, #80a0fd 100%);
+  background-image: linear-gradient(60deg, #1eb2f5 0%, #03A9F4 37%, #03A9F4 65%, #1eb2f5 100%);
+  /*background-image: linear-gradient(135deg, #45c5ff 0%, #03A9F4 75%, #80a0fd 100%);*/
   /*background-image: linear-gradient(to top, #f3e7e9 0%, #e3eeff 99%, #e3eeff 100%);*/
   /*background-image: linear-gradient(-45deg, #FFC796 0%, #FF6B95 100%);*/
 }

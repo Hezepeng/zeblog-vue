@@ -5,7 +5,7 @@
         <el-col :span="8">
           <el-input v-model="article.title" placeholder="输入文章标题..." />
         </el-col>
-        <el-col :span="12" class="style-select">
+        <el-col :span="14" class="style-select">
           <el-select v-model="article.codeStyle" placeholder="请选择代码风格">
             <el-option
               v-for="(item, key) in codeStyleList"
@@ -14,7 +14,10 @@
               :value="key"
             />
           </el-select>
-          <el-button size="medium" type="primary" @click="showDialog=true">发表文章</el-button>
+          <el-button style="margin-left:20px" size="medium" type="success" @click="onPublish(0)">使用静态HTML发表</el-button>
+
+          <el-button style="margin-left:20px" size="medium" type="primary" @click="onPublish(1)">使用MarkDown发表</el-button>
+
         </el-col>
       </el-form-item>
     </el-form>
@@ -79,10 +82,16 @@
             </el-col>
           </el-form-item>
           <el-form-item label="设置可见" prop="state">
+<!--            <el-col :span="12">-->
+<!--              <el-radio-group v-model="article.state">-->
+<!--                <el-radio :label="1">公开</el-radio>-->
+<!--                <el-radio :label="2">仅自己可见</el-radio>-->
+<!--              </el-radio-group>-->
+<!--            </el-col>-->
             <el-col :span="12">
               <el-radio-group v-model="article.state">
-                <el-radio :label="1">公开</el-radio>
-                <el-radio :label="2">仅自己可见</el-radio>
+                <el-radio :label="0">HTML</el-radio>
+                <el-radio :label="1">MarkDown</el-radio>
               </el-radio-group>
             </el-col>
           </el-form-item>
@@ -133,7 +142,7 @@ export default {
     return {
       article: {
         title: '',
-        codeStyle: '',
+        codeStyle: 'github',
         markdownContent: '',
         htmlContent: '',
         markdownCatalog: '',
@@ -295,6 +304,14 @@ export default {
   },
 
   methods: {
+    onPublish(state) {
+      this.$refs.article.validate(valid => {
+        if (valid) {
+          this.article.state = state
+          this.showDialog = true
+        }
+      })
+    },
     imgAdd(pos, $file) {
       const formData = new FormData()
       formData.append('image', $file)
@@ -343,8 +360,8 @@ export default {
       this.showDialog = false
     },
     onSaveToDrafts() {
-      // State 状态字段 0草稿 1公开 2私密
-      this.article.state = 0
+      // State 状态字段 0草稿 1公开 2私密 暂时用来区分html和MarkDown
+      // this.article.state = 0
       this.onSubmit()
     },
     handleCloseTag(tag) {

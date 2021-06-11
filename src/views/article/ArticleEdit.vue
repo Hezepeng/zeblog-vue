@@ -14,7 +14,10 @@
               :value="key"
             />
           </el-select>
-          <el-button size="medium" type="primary" @click="showDialog=true">更新文章</el-button>
+          <el-button style="margin-left:20px" size="medium" type="success" @click="onPublish(0)">更新HTML标题</el-button>
+
+          <el-button style="margin-left:20px" size="medium" type="primary" @click="onPublish(1)">更新MarkDown</el-button>
+
         </el-col>
       </el-form-item>
     </el-form>
@@ -78,11 +81,11 @@
               </el-select>
             </el-col>
           </el-form-item>
-          <el-form-item label="设置可见" prop="state">
+          <el-form-item label="设置发表类型" prop="state">
             <el-col :span="12">
               <el-radio-group v-model="article.state">
-                <el-radio :label="1">公开</el-radio>
-                <el-radio :label="2">仅自己可见</el-radio>
+                <el-radio :label="0">HTML</el-radio>
+                <el-radio :label="1">MarkDown</el-radio>
               </el-radio-group>
             </el-col>
           </el-form-item>
@@ -90,7 +93,7 @@
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button type="danger" @click="onCancelDialog()">取 消</el-button>
-          <el-button @click="onSaveToDrafts()">保存为草稿</el-button>
+<!--          <el-button @click="onSaveToDrafts()">保存为草稿</el-button>-->
           <el-button type="primary" @click="onSubmit()">更新</el-button>
         </div>
       </el-dialog>
@@ -104,6 +107,7 @@ import { getArticleById, updateArticle, uploadImage } from '@/api/article'
 const mavonEditor = require('mavon-editor')
 import 'mavon-editor/dist/css/index.css'
 import { getUserCategory } from '@/api/category'
+import article from "../../../mock/article";
 export default {
   name: 'ArticleEdit',
   components: { 'mavonEditor': mavonEditor.mavonEditor },
@@ -135,7 +139,7 @@ export default {
       formRules: {
         title: [{ required: true, trigger: 'blur', message: '文章名不能为空' }],
         originalType: [{ required: true, trigger: 'blur', message: '请选择文章类型' }],
-        state: [{ required: true, trigger: 'blur', message: '请选择是否公开' }]
+        state: [{ required: true, trigger: 'blur', message: '请选择发表类型' }]
       },
       inputVisible: false,
       inputValue: '',
@@ -286,6 +290,15 @@ export default {
   },
 
   methods: {
+    onPublish(state) {
+      this.$refs.article.validate(valid => {
+        if (valid) {
+          this.article.state = state
+          console.log(article)
+          this.showDialog = true
+        }
+      })
+    },
     imgAdd(pos, $file) {
       const formData = new FormData()
       formData.append('image', $file)
@@ -335,7 +348,7 @@ export default {
           updateArticle(this.article).then(response => {
             Message.success(response.msg)
             this.showDialog = false
-            this.$router.push('/blog/article/detail/' + response.data.articleId)
+            this.$router.push('/article/detail/' + response.data.articleId)
           }).catch(() => {})
         }
       })
@@ -344,8 +357,8 @@ export default {
       this.showDialog = false
     },
     onSaveToDrafts() {
-      // State 状态字段 0草稿 1公开 2私密
-      this.article.state = 0
+      // State 状态字段 0草稿 1公开 2私密 展示0为html发表 1为markdown发表
+      // this.article.state = 0
       this.onSubmit()
     },
     handleCloseTag(tag) {

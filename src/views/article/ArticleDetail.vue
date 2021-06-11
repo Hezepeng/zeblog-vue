@@ -19,7 +19,7 @@ export default {
       codeStyle: '',
       title: '',
       html: '',
-      defaultData: 'preview'
+      defaultData: 'preview',
     }
   },
 

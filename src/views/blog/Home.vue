@@ -1,39 +1,14 @@
 <template>
   <el-container>
     <el-header>
-      <el-menu
-        :default-active="activeIndex2"
-        class="el-menu-demo"
-        mode="horizontal"
-        background-color="#545c64"
-        text-color="#fff"
-        active-text-color="#ffd04b"
-        @select="handleSelect"
-      >
-        <el-menu-item index="1">首页</el-menu-item>
-        <el-submenu index="2">
-          <template slot="title">文章分类</template>
-          <el-menu-item index="2-1">Java</el-menu-item>
-          <el-menu-item index="2-2">Vue</el-menu-item>
-          <el-menu-item index="2-3">Python</el-menu-item>
-          <el-submenu index="2-4">
-            <template slot="title">Other</template>
-            <el-menu-item index="2-4-1">MySQL</el-menu-item>
-            <el-menu-item index="2-4-2">算法</el-menu-item>
-          </el-submenu>
-        </el-submenu>
-<!--        <el-menu-item index="3" disabled>标签页</el-menu-item>-->
-<!--        <el-menu-item index="4" @click="$router.push('/login')"><a target="_blank">管理后台</a></el-menu-item>-->
-<!--        <el-menu-item style="right: 0;position: absolute;" index="5" @click="redirectToQQlogin">-->
-<!--          <svg-icon style="width: 30px;height: 30px;vertical-align: middle" icon-class="qq_login" />-->
-<!--        </el-menu-item>-->
-      </el-menu>
+      <home-menu />
+      <carousel-list></carousel-list>
     </el-header>
     <el-row style="padding: 0px">
       <el-col :span="24">
-        <el-carousel :interval="5000" trigger="click" height="350px">
+        <el-carousel :interval="5000" trigger="click" class="carousel-height">
           <el-carousel-item v-for="item in carouselList" :key="item">
-            <el-image :src="item" fit="cover" style="height: 350px">
+            <el-image :src="item" fit="zoom" class="carousel-height">
               <div slot="error" class="image-slot">
                 <i class="el-icon-picture-outline" />
               </div>
@@ -44,14 +19,18 @@
     </el-row>
     <el-main>
       <el-row :gutter="20">
-        <el-col :xs="24" :sm="18" :md="18" :lg="18" :xl="18">
+        <el-col v-loading="loading" :xs="24" :sm="18" :md="18" :lg="18" :xl="18" style="margin-top: 20px">
           <el-row v-for="article in articleList" :key="article.articleId" style="margin-bottom: 20px">
             <el-col :span="24">
               <el-card v-loading="loading" class="box-card" :body-style="{ padding: '0px' }">
                 <div class="article-title-card">
-                  <router-link :to="'/blog/article/detail/'+article.articleId"><span>{{ article.title }}</span></router-link>
+                  <svg-icon v-if="article.isTop" icon-class="zhiding"
+                            style="position: absolute;left: -1px;top:-1px;height: 60px;width: 60px">
+                  </svg-icon>
+                  <router-link :to="'/article/detail/'+article.articleId"><span>{{ article.title }}</span>
+                  </router-link>
                   <div class="tag-info">
-                    <span v-for="(key,tag) in article.tags" :key="key"><a @click="onShowTagArticle(tag.tagId)">{{ tag.tagName }}</a></span>
+                    <span v-for="(tag,key) in article.tags" :key="key"><a @click="onShowTagArticle(tag.tagId)">{{ tag.tagName }}</a></span>
                   </div>
                 </div>
                 <div class="article-content-card">
@@ -62,14 +41,30 @@
                       icon-class="icon_calendar_fill"
                     />{{ article.createTime }}</span>
                     <span><svg-icon style="margin:0 5px;" icon-class="eye-open" />{{ article.readTimes }}</span>
-                    <span><svg-icon style="margin:0 5px;" icon-class="icon_message_fill" />{{ article.thumbsUpTimes }}</span>
+                    <span><svg-icon
+                      style="margin:0 5px;"
+                      icon-class="icon_message_fill"
+                    />{{ article.thumbsUpTimes }}</span>
                   </div>
                 </div>
               </el-card>
             </el-col>
           </el-row>
+          <el-row>
+            <el-pagination
+              background
+              :page-size="5"
+              :current-page="pageCount"
+              layout="prev, pager, next"
+              :total="articleTotalCount"
+              @current-change="pageCountChanged"
+              @prev-click="onPrevPage"
+              @next-click="onNextPage"
+            >
+            </el-pagination>
+          </el-row>
         </el-col>
-        <el-col :xs="24" :sm="6" :md="6" :lg="6" :xl="6">
+        <el-col :xs="24" :sm="6" :md="6" :lg="6" :xl="6" :offset="initOffset" style="margin-top: 20px">
           <el-row style="margin-bottom: 20px">
             <el-card class="userinfo-card" :body-style="{ padding: '0 10px 10px 10px' }">
               <div slot="header" class="clearfix">
@@ -80,7 +75,7 @@
                     fit="fill"
                   />
                 </div>
-                <div style="text-align: left;position: relative;margin-left: 5rem;font-size:0.9rem;padding-left: 20px">
+                <div style="text-align: left;position: relative;margin-left: 5rem;font-size:1.2rem;padding-left: 20px">
                   <p>何泽鹏</p>
                   <p>Java开发工程师</p>
                 </div>
@@ -111,7 +106,7 @@
               <el-row style="margin-top: 20px">
                 <div style="background: #589EF8;height: auto;text-align: center;">
                   <p style="line-height: 20px;padding-top: 5px;margin: 0 auto;font-size: 13px">待上线运行</p>
-                  <p style="line-height: 20px;padding-bottom:5px;margin: 0 auto;font-size: 13px">第 x 天</p>
+                  <p style="line-height: 20px;padding-bottom:5px;margin: 0 auto;font-size: 13px">第 112 天</p>
                 </div>
               </el-row>
             </el-card>
@@ -124,9 +119,10 @@
                   <span>热门文章</span>
                   <el-button style="float: right; padding: 3px 0" type="text">更多</el-button>
                 </div>
-                <div class="hot-article-list">
-                  <p v-for="article in articleList" :key="article.articleId">
-                    <router-link :to="'/blog/article/detail/'+article.articleId"><span>{{ article.title }}</span></router-link>
+                <div v-loading="loading" class="hot-article-list">
+                  <p v-for="article in hotArticleList" :key="article.articleId">
+                    <router-link :to="'/article/detail/'+article.articleId"><span>{{ article.title }}</span>
+                    </router-link>
                   </p>
                 </div>
               </el-card>
@@ -153,7 +149,9 @@
       <div>
         <el-row justify="center">
           <el-col>
-            <p style="margin:10px 0 5px 0;line-height:16px;font-size: 14px">Copyright © 2019 <a href="http://www.beian.miit.gov.cn">鄂ICP备16020493号</a>
+            <p style="margin:10px 0 5px 0;line-height:16px;font-size: 14px">Copyright © 2019 <a
+              href="http://www.beian.miit.gov.cn"
+            >鄂ICP备16020493号</a>
             </p>
           </el-col>
         </el-row>
@@ -172,22 +170,26 @@
 </template>
 
 <script>
-import { getTencentQuickLoginUrl } from '@/api/common'
-import { getArticleByCategoryId, getArticleByTagId, getHomeArticle } from '@/api/article'
+import { getArticleByCategoryId, getArticleByPage, getArticleByTagId, getHotArticle } from '@/api/article'
+import HomeMenu from '@/views/blog/HomeMenu'
 
 export default {
   name: 'Home',
+  components: {HomeMenu},
 
-  data() {
+  data () {
     return {
-      activeIndex: '1',
-      activeIndex2: '1',
+      articleTotalCount: 0,
+      pageCount: 1,
       avatar: 'https://hezepeng-1252705718.cos.ap-guangzhou.myqcloud.com/icon/1%20%2817%29.jpg',
-      carouselList: ['https://zeblog-1252705718.cos.ap-guangzhou.myqcloud.com/carousel/P80923-103050.jpg', 'https://zeblog-1252705718.cos.ap-guangzhou.myqcloud.com/carousel/P80923-103430.jpg'],
-      tags: ['Java', 'Vue', 'Spring', 'MVC', '权限验证', '跨域请求', 'WebStorm配置', 'Vue CLI脚手架', '并发处理', '联合查询'],
+      carouselList: ['https://zeblog-1252705718.cos.ap-guangzhou.myqcloud.com/carousel/desktop_pic_1.png', 'https://zeblog-1252705718.cos.ap-guangzhou.myqcloud.com/carousel/desktop_pic_0.jpg'],
+      tags: ['Java', 'Vue', 'Spring', 'MVC', '权限验证', 'Redis', 'MySQL', 'Vue CLI脚手架', 'AOP', 'JVM'],
       hslArray: [],
       articleList: [],
-      articleLoading: true
+      hotArticleList: [],
+      articleLoading: true,
+      initOffset: 18,
+      loading: true,
     }
   },
   computed: {
@@ -201,7 +203,7 @@ export default {
       return rgbArray.map(function(item) {
         return {
           value: item,
-          style: { background: 'rgb(' + item.toString() + ')' }
+          style: {background: 'rgb(' + item.toString() + ')'}
         }
       })
     }
@@ -210,27 +212,42 @@ export default {
     this.hslArray = this.getHslArray()
   },
   mounted: function() {
-    getHomeArticle().then(response => {
-      this.articleList = response.data
+    getArticleByPage(this.pageCount).then(response => {
+      this.initOffset = 0
+      this.articleList = response.data.articleList
+      this.articleTotalCount = response.data.articleTotalCount
       this.articleLoading = false
+    }).then(() => {
+      this.loading = false
+    })
+    getHotArticle().then(response => {
+      this.hotArticleList = response.data
     })
   },
   methods: {
-    onShowTagArticle(tagId) {
-      getArticleByTagId(tagId)
-    },
-    onShowCategoryArticle(categoryId) {
-      getArticleByCategoryId(categoryId)
-    },
-    // 跳转到qq互联快捷登录页面
-    redirectToQQlogin() {
-      const redirect_url = window.location.href
-      getTencentQuickLoginUrl(redirect_url).then(response => {
-        window.location.href = response.data
+    pageCountChanged (page) {
+      this.pageCount = page
+      this.loading = true
+      getArticleByPage(page).then(response => {
+        this.initOffset = 0
+        this.articleList = response.data.articleList
+        this.articleTotalCount = response.data.articleTotalCount
+        this.articleLoading = false
+      }).then(() => {
+        this.loading = false
       })
     },
-    handleSelect(key, keyPath) {
-      console.log(key, keyPath)
+    onPrevPage () {
+      this.pageCount -= 1
+    },
+    onNextPage () {
+      this.pageCount += 1
+    },
+    onShowTagArticle (tagId) {
+      getArticleByTagId(tagId)
+    },
+    onShowCategoryArticle (categoryId) {
+      getArticleByCategoryId(categoryId)
     },
     /**
      * HSL颜色值转换为RGB
@@ -359,20 +376,22 @@ export default {
 }
 
 .article-title-card {
-  padding: 20px;
-  font-size: 22px;
+  padding: 18px;
+  font-size: 28px;
   color: #ffffff;
   text-align: center;
   /*background-color: #E77F7B;*/
   /*background-image: linear-gradient(60deg, #03A9F4 0%, #8fb7e0 37%, #2cacd1 65%, #9bd2f1 100%);*/
-  background-image: linear-gradient(60deg, #03A9F4 0%, #8fb7e0 37%, #bda6dc 65%, #9bd2f1 100%)
+  background-image: linear-gradient(60deg, #1eb2f5 0%, #03A9F4 37%, #03A9F4 65%, #1eb2f5 100%);
+
+  /*background-image: linear-gradient(60deg, #03A9F4 0%, #8fb7e0 37%, #bda6dc 65%, #9bd2f1 100%)*/
 }
 
 .article-title-card > .tag-info {
   line-height: 15px;
   margin: 10px 0 0 0;
   font-size: 13px;
-  color: #e4e4e4;
+  color: #ffffff;
   text-align: center;
 }
 
@@ -458,8 +477,30 @@ body > .el-container {
   margin-bottom: 40px;
 }
 
+el-main {
+  padding: 0 20px;
+}
+
 </style>
 
 <style>
+.carousel-height {
+  height: 300px !important;
+}
 
+.el-carousel__container {
+  height: 300px;
+
+}
+
+/*@media screen and (max-width: 500px) {*/
+/*  .carousel-height {*/
+/*    height: 220px;*/
+/*  }*/
+/*}*/
+/*@media screen and (min-width: 501px) and (max-width: 800px){*/
+/*  .carousel-height {*/
+/*    height: 320px;*/
+/*  }*/
+/*}*/
 </style>

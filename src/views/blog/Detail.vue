@@ -1,48 +1,24 @@
 <template>
   <el-container>
     <el-header>
-      <el-menu
-        :default-active="activeIndex2"
-        class="el-menu-demo"
-        mode="horizontal"
-        background-color="#545c64"
-        text-color="#fff"
-        active-text-color="#ffd04b"
-        @select="handleSelect"
-      >
-        <el-menu-item index="1">首页</el-menu-item>
-        <el-submenu index="2">
-          <template slot="title">文章分类</template>
-          <el-menu-item index="2-1">Java</el-menu-item>
-          <el-menu-item index="2-2">Vue</el-menu-item>
-          <el-menu-item index="2-3">Python</el-menu-item>
-          <el-submenu index="2-4">
-            <template slot="title">Other</template>
-            <el-menu-item index="2-4-1">MySQL</el-menu-item>
-            <el-menu-item index="2-4-2">算法</el-menu-item>
-          </el-submenu>
-        </el-submenu>
-        <el-menu-item index="3" disabled>标签页</el-menu-item>
-<!--        <el-menu-item index="4" @click="$router.push('/login')"><a target="_blank">管理后台</a></el-menu-item>-->
-<!--        <el-menu-item style="float: right" index="5" @click="redirectToQQlogin"><svg-icon style="width: 30px;height: 30px;vertical-align: middle" icon-class="qq_login" /></el-menu-item>-->
-      </el-menu>
+      <home-menu />
     </el-header>
-    <el-row style="padding: 0px">
-      <el-col :span="24">
-        <el-carousel :interval="5000" trigger="click" height="350px">
-          <el-carousel-item v-for="item in carouselList" :key="item">
-            <el-image :src="item" fit="fill" />
-          </el-carousel-item>
-        </el-carousel>
-      </el-col>
-    </el-row>
+    <!--    <el-row style="padding: 0px">-->
+    <!--      <el-col :span="24">-->
+    <!--        <el-carousel :interval="5000" trigger="click" height="350px">-->
+    <!--          <el-carousel-item v-for="item in carouselList" :key="item">-->
+    <!--            <el-image :src="item" fit="fill" />-->
+    <!--          </el-carousel-item>-->
+    <!--        </el-carousel>-->
+    <!--      </el-col>-->
+    <!--    </el-row>-->
     <el-main>
 
       <el-row :gutter="20">
-        <el-col :span="18">
-          <el-row>
-            <el-col :span="24">
-              <el-card class="box-card" :body-style="{ padding: '0px' }">
+        <el-col :xs="24" :sm="16" :md="18" :lg="18" :xl="18">
+          <el-row style="margin-top: 20px;">
+            <el-col :span="24" style="min-height: 500px">
+              <el-card v-loading="loading" class="box-card" :body-style="{ padding: '0px'}">
                 <div class="article-title-card">
                   <span>{{ article.title }}</span>
                   <div class="tag-info">
@@ -52,15 +28,33 @@
                     <span>{{ article.author.nickname }}</span>
                   </div>
                 </div>
-                <div class="article-content-card">
-                  <mavon-editor ref="md2" :hljs="true" :code-style="codeStyle" :subfield="false" :default-open="defaultData" :toolbars-flag="false" :box-shadow="false" :navigation="true" v-html="html" />
+                <iframe
+                  v-if="articleUrl!==null && article.hasOwnProperty('state') && article.state === 0"
+                  id="article-content"
+                  :src="articleUrl"
+                  scrolling="no"
+                  style="width: 100%;min-height: 500px"
+                  frameborder="0"
+                />
+                <div v-if="showMarkDown" class="article-content-card">
+                  <mavon-editor
+                    ref="md2"
+                    :hljs="true"
+                    :code-style="codeStyle"
+                    :subfield="false"
+                    :default-open="defaultData"
+                    :toolbars-flag="false"
+                    :box-shadow="false"
+                    :navigation="true"
+                    v-html="html"
+                  />
                 </div>
               </el-card>
             </el-col>
           </el-row>
         </el-col>
-        <el-col :span="6">
-          <el-row>
+        <el-col :xs="24" :sm="8" :md="6" :lg="6" :xl="6">
+          <el-row style="margin-top: 20px">
             <el-col>
               <el-card class="right-card">
                 <div slot="header" style="text-align: left">
@@ -68,14 +62,15 @@
                   <el-button style="float: right; padding: 3px 0" type="text">更多</el-button>
                 </div>
                 <div class="hot-article-list">
-                  <p v-for="o in 8" :key="o">
-                    <a href="#">{{ '热门文章标题 ' + o }}</a>
+                  <p v-for="article in hotArticleList" :key="article.articleId">
+                    <router-link :to="'/article/detail/'+article.articleId"><span>{{ article.title }}</span>
+                    </router-link>
                   </p>
                 </div>
               </el-card>
             </el-col>
           </el-row>
-          <el-row style="margin-top: 30px">
+          <el-row style="margin-top: 20px">
             <el-col>
               <el-card class="right-card">
                 <div slot="header" style="text-align: left">
@@ -90,13 +85,15 @@
           </el-row>
         </el-col>
       </el-row>
-
     </el-main>
     <el-footer>
       <div style="text-align: center">
-        <p style="margin:10px 0 5px 0;line-height:16px;font-size: 14px">Copyright © 2019 <a href="http://www.beian.miit.gov.cn">鄂ICP备16020493号</a></p>
+        <p style="margin:10px 0 5px 0;line-height:16px;font-size: 14px">Copyright © 2019 <a
+          href="http://www.beian.miit.gov.cn"
+        >鄂ICP备16020493号</a></p>
         <p style="margin:5px 0 10px 0;line-height:16px;font-size: 14px">Powered by
-          <svg-icon icon-class="github" /> <a href="https://www.github.com/Hezepeng">Hezepeng</a>
+          <svg-icon icon-class="github" />
+          <a href="https://www.github.com/Hezepeng">Hezepeng</a>
         </p>
       </div>
     </el-footer>
@@ -104,25 +101,33 @@
 </template>
 
 <script>
-import { getTencentQuickLoginUrl } from '@/api/common'
-import { getArticleById } from '@/api/article'
+import { getArticleById, getHotArticle } from '@/api/article'
+import HomeMenu from '@/views/blog/HomeMenu'
+
 const mavonEditor = require('mavon-editor')
 export default {
   name: 'Detail',
-  components: { 'mavonEditor': mavonEditor.mavonEditor },
+  components: { 'mavonEditor': mavonEditor.mavonEditor, HomeMenu },
   data() {
     return {
       activeIndex: '1',
       activeIndex2: '1',
       avatar: 'https://hezepeng-1252705718.cos.ap-guangzhou.myqcloud.com/icon/1%20%2817%29.jpg',
-      carouselList: ['https://zeblog-1252705718.cos.ap-guangzhou.myqcloud.com/carousel/P80923-103050.jpg', 'https://zeblog-1252705718.cos.ap-guangzhou.myqcloud.com/carousel/P80923-103430.jpg'],
-      tags: ['Java', 'Vue', 'Spring', 'MVC', '权限验证', '跨域请求', 'WebStorm配置', 'Vue CLI脚手架', '并发处理', '联合查询'],
+      carouselList: ['https://zeblog-1252705718.cos.ap-guangzhou.myqcloud.com/carousel/desktop_pic_1.png', 'https://zeblog-1252705718.cos.ap-guangzhou.myqcloud.com/carousel/desktop_pic_0.jpg'],
+      tags: ['Java', 'Vue', 'Spring', 'MVC', '权限验证', 'Redis', 'MySQL', 'Vue CLI脚手架', 'AOP', 'JVM'],
       hslArray: [],
       articleId: '',
+      articleList: [],
+      hotArticleList: [],
       codeStyle: '',
       html: '',
       defaultData: 'preview',
-      article: {}
+      article: { 'author': { 'nickname': '' }},
+      staticHtml: '',
+      articleUrl: null,
+      loading: true,
+      showMarkDown: false,
+
     }
   },
   computed: {
@@ -150,16 +155,30 @@ export default {
       this.html = response.data.htmlContent
       this.codeStyle = response.data.codeStyle === null ? 'xcode' : response.data.codeStyle
       this.article = response.data
+      this.articleUrl = '../../../' + this.article.title + '.html'
+      this.loading = false
+      var interval = null;
+      if (this.article.state === 0){
+        interval = setInterval(function() {
+          const iframe = document.getElementById('article-content')
+          if (iframe !== null) {
+            const iframeWin = iframe.contentDocument.parentWindow || iframe.contentWindow
+            if (iframeWin.document.body) {
+              const height = iframeWin.document.documentElement.scrollHeight || iframeWin.document.body.scrollHeight
+              iframe.height = height < 500 ? 500 : height
+              // clearInterval(interval);
+            }
+          }
+        }, 400)
+      } else {
+        this.showMarkDown = true
+      }
+    })
+    getHotArticle().then(response => {
+      this.hotArticleList = response.data
     })
   },
   methods: {
-    // 跳转到qq互联快捷登录页面
-    redirectToQQlogin() {
-      const redirect_url = 'http://47.100.207.45:8080/zeblog_war/home/redirect_to_vue'
-      getTencentQuickLoginUrl(redirect_url).then(response => {
-        window.location.href = response.data
-      })
-    },
     handleSelect(key, keyPath) {
       console.log(key, keyPath)
     },
@@ -251,7 +270,7 @@ export default {
   text-align: center;
 }
 
-.el-carousel__indicators--horizontal .el-carousel__indicators{
+.el-carousel__indicators--horizontal .el-carousel__indicators {
   line-height: 60px;
 }
 
@@ -284,53 +303,60 @@ export default {
 .text {
   font-size: 14px;
 }
+
 .item {
   margin-bottom: 18px;
 }
-.article-title-card{
-  padding: 20px;
-  font-size: 22px;
+
+.article-title-card {
+  padding: 15px;
+  font-size: 33px;
   color: #ffffff;
   text-align: center;
   /*background-color: #E77F7B;*/
+  background-image: linear-gradient(60deg, #1eb2f5 0%, #03A9F4 37%, #03A9F4 65%, #1eb2f5 100%);
+
   /*background-image: linear-gradient(60deg, #03A9F4 0%, #8fb7e0 37%, #2cacd1 65%, #9bd2f1 100%);*/
-  background-image: linear-gradient(60deg, #03A9F4 0%, #8fb7e0 37%, #bda6dc 65%, #9bd2f1 100%)
+  /*background-image: linear-gradient(60deg, #03A9F4 0%, #8fb7e0 37%, #bda6dc 65%, #9bd2f1 100%)*/
 }
-.article-title-card > .tag-info{
+
+.article-title-card > .tag-info {
   line-height: 15px;
   margin: 10px 0 0 0;
-  font-size: 13px;
-  color: #f0f0f0;
+  font-size: 15px;
+  color: #ffffff;
   text-align: center;
 }
 
-.article-title-card > .author-info{
+.article-title-card > .author-info {
   line-height: 15px;
   margin: 10px 0 0 0;
-  font-size: 13px;
-  color: #f0f0f0;
-  font-weight: bold;
+  font-size: 15px;
+  color: #ffffff;
   text-align: center;
 }
 
-.tag-info > span{
+.tag-info > span {
   padding: 2px 10px;
   /*background-color: #1482f0;*/
   /*border-radius: 13px;*/
 }
-.article-content-card{
+
+.article-content-card {
   text-align: left;
   padding: 20px;
   font-size: 16px;
   color: #898989;
   line-height: 24px;
 }
-.article-content-card > p{
+
+.article-content-card > p {
   margin: 0;
   padding: 0 0 10px 0;
   border-bottom: 1px solid #edf1f2;
 }
-.article-content-card > .remark{
+
+.article-content-card > .remark {
   margin: 0;
   text-align: left;
   color: #B4B4B4;
@@ -338,27 +364,31 @@ export default {
   line-height: 15px;
   padding: 10px 0 0 0;
 }
-.right-card{
+
+.right-card {
   display: block;
   overflow: hidden;
 }
-.hot-article-list{
+
+.hot-article-list {
   font-size: 14px;
   line-height: 18px;
   text-align: left;
   color: #20a0ff;
 }
-.hot-article-list > p:first-child{
+
+.hot-article-list > p:first-child {
   margin: 0;
 }
-.hot-article-list > p{
+
+.hot-article-list > p {
   margin: 10px 0;
 }
 
-.hot-tag-list{
+.hot-tag-list {
 }
 
-.hot-tag-list > a{
+.hot-tag-list > a {
   display: inline-block;
   min-width: 10px;
   vertical-align: middle;
@@ -377,6 +407,7 @@ export default {
   display: table;
   content: "";
 }
+
 .clearfix:after {
 
   clear: both;

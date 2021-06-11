@@ -49,6 +49,7 @@ service.interceptors.response.use(async(response) => {
         cancelButtonText: '关闭页面',
         type: 'warning'
       }).then(() => {
+        console.log("点击了重新登录")
         store.dispatch('fedLogOut').then(() => {
           location.reload() // 为了重新实例化vue-router对象 避免bug
         })
